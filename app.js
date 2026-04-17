@@ -14,6 +14,8 @@ const fileStatus = document.getElementById("fileStatus");
 
 let currentLang = "ja";
 let featuresData = [];
+let currentImageBase64 = "";
+let currentMimeType = "";
 
 const uiText = {
   ja: {
@@ -26,8 +28,11 @@ const uiText = {
     fileNone: "ファイル未選択",
     chooseOne: "選ばなくてもOK",
     analyze: "判定する",
+    aiAnalyze: "AIで写真をみる",
+    aiLoading: "AIが写真を見ています…",
     selectedFeatures: "選んだ特徴",
-    whyTitle: "なぜこの判定？"
+    whyTitle: "なぜこの判定？",
+    noImage: "先に写真を選んでください"
   },
   en: {
     appTitle: "🐱 Cat Emotion App",
@@ -39,8 +44,11 @@ const uiText = {
     fileNone: "No file selected",
     chooseOne: "Optional",
     analyze: "Analyze",
+    aiAnalyze: "Analyze Photo with AI",
+    aiLoading: "AI is checking the photo...",
     selectedFeatures: "Selected Features",
-    whyTitle: "Why this result?"
+    whyTitle: "Why this result?",
+    noImage: "Please choose a photo first"
   },
   th: {
     appTitle: "🐱 แอปอ่านอารมณ์แมว",
@@ -52,8 +60,11 @@ const uiText = {
     fileNone: "ยังไม่ได้เลือกไฟล์",
     chooseOne: "ไม่จำเป็นต้องเลือก",
     analyze: "วิเคราะห์",
+    aiAnalyze: "ใช้ AI ดูจากรูป",
+    aiLoading: "AI กำลังดูรูปอยู่...",
     selectedFeatures: "ลักษณะที่เลือก",
-    whyTitle: "ทำไมจึงวิเคราะห์แบบนี้?"
+    whyTitle: "ทำไมจึงวิเคราะห์แบบนี้?",
+    noImage: "กรุณาเลือกรูปก่อน"
   }
 };
 
@@ -92,6 +103,11 @@ async function loadFeatures() {
 function renderManualSelectors() {
   manualArea.innerHTML = "";
 
+  const aiButton = document.createElement("button");
+  aiButton.textContent = text("aiAnalyze");
+  aiButton.onclick = analyzePhotoWithAI;
+  manualArea.appendChild(aiButton);
+
   featuresData.forEach(group => {
     const wrap = document.createElement("div");
     wrap.className = "feature-group";
@@ -122,8 +138,64 @@ function renderManualSelectors() {
   const button = document.createElement("button");
   button.textContent = text("analyze");
   button.onclick = analyzeSelection;
-
   manualArea.appendChild(button);
+}
+
+async function analyzePhotoWithAI() {
+  if (!currentImageBase64 || !currentMimeType) {
+    alert(text("noImage"));
+    return;
+  }
+
+  resultBox.innerHTML = `
+    <div class="result-card">
+      <h3>${text("aiLoading")}</h3>
+    </div>
+  `;
+
+  try {
+    const response = await fetch("/api/analyze-cat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        imageBase64: currentImageBase64,
+        mimeType: currentMimeType
+      })
+    });
+
+    const data = await response.json();
+
+    applyAIResultToSelectors(data);
+
+    resultBox.innerHTML = `
+      <div class="result-card">
+        <h3>${text("aiAnalyze")}</h3>
+        <p>AI候補を選択欄に入れました。必要なら手で直してから「${text("analyze")}」を押してください。</p>
+      </div>
+    `;
+  } catch (error) {
+    resultBox.innerHTML = `
+      <div class="result-card">
+        <h3>AI Error</h3>
+        <p>${error.message}</p>
+      </div>
+    `;
+  }
+}
+
+function applyAIResultToSelectors(data) {
+  const selects = manualArea.querySelectorAll("select");
+
+  selects.forEach(select => {
+    const group = select.dataset.group;
+    const value = data[group];
+
+    if (value && value !== "unknown") {
+      select.value = value;
+    }
+  });
 }
 
 function analyzeSelection() {
@@ -175,7 +247,6 @@ function judgeEmotion(selected) {
 
   const reasons = [];
 
-  // 目
   if (has("slow_blink")) {
     scores.relaxed += 3;
     scores.affectionate += 2;
@@ -216,7 +287,6 @@ function judgeEmotion(selected) {
     });
   }
 
-  // 耳
   if (has("ears_forward")) {
     scores.focused += 2;
     scores.alert += 1;
@@ -247,7 +317,6 @@ function judgeEmotion(selected) {
     });
   }
 
-  // 前足
   if (has("kneading")) {
     scores.affectionate += 3;
     scores.relaxed += 2;
@@ -357,7 +426,6 @@ function judgeEmotion(selected) {
     });
   }
 
-  // しっぽ
   if (has("tail_up")) {
     scores.affectionate += 2;
     scores.relaxed += 1;
@@ -397,7 +465,6 @@ function judgeEmotion(selected) {
     });
   }
 
-  // 体
   if (has("loaf")) {
     scores.relaxed += 2;
     reasons.push({
@@ -436,7 +503,6 @@ function judgeEmotion(selected) {
     });
   }
 
-  // 最終判定
   let topKey = "relaxed";
   let topScore = -1;
 
@@ -486,49 +552,3 @@ function judgeEmotion(selected) {
     }
   };
 }
-
-function renderResult(result, selected) {
-  const list = Object.entries(selected).map(([g, k]) => {
-    const group = featuresData.find(x => x.group === g);
-    const opt = group.options.find(o => o.key === k);
-    return `<li>${getGroupLabel(group)}: ${getOptionText(opt)}</li>`;
-  }).join("");
-
-  resultBox.innerHTML = `
-    <div class="result-card">
-      <h3>${result.title[currentLang]}</h3>
-      <p>${result.message[currentLang]}</p>
-      <p><strong>${text("whyTitle")}</strong></p>
-      <p>${result.why[currentLang]}</p>
-      <ul>${list}</ul>
-    </div>
-  `;
-}
-
-langSelect.addEventListener("change", e => {
-  currentLang = e.target.value;
-  updateStaticText();
-  renderManualSelectors();
-  resultBox.innerHTML = "";
-});
-
-imageInput.addEventListener("change", e => {
-  const file = e.target.files[0];
-
-  if (!file) {
-    fileStatus.textContent = text("fileNone");
-    return;
-  }
-
-  fileStatus.textContent = file.name;
-  fileStatus.dataset.hasFile = true;
-
-  const reader = new FileReader();
-  reader.onload = ev => {
-    preview.src = ev.target.result;
-    preview.style.display = "block";
-  };
-  reader.readAsDataURL(file);
-});
-
-loadFeatures();
