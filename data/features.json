@@ -1,0 +1,150 @@
+[
+  {
+    "group": "eyes",
+    "label_ja": "目",
+    "label_en": "Eyes",
+    "label_th": "ดวงตา",
+    "options": [
+      {
+        "key": "slow_blink",
+        "ja": "ゆっくり瞬き",
+        "en": "Slow blink",
+        "th": "กะพริบตาช้าๆ"
+      },
+      {
+        "key": "eyes_wide",
+        "ja": "目が大きく開く",
+        "en": "Eyes wide open",
+        "th": "ตาเบิกกว้าง"
+      },
+      {
+        "key": "eyes_narrow",
+        "ja": "目を細める",
+        "en": "Eyes narrowed",
+        "th": "หรี่ตา"
+      },
+      {
+        "key": "pupils_large",
+        "ja": "瞳孔が大きい",
+        "en": "Large pupils",
+        "th": "รูม่านตาขยาย"
+      }
+    ]
+  },
+  {
+    "group": "ears",
+    "label_ja": "耳",
+    "label_en": "Ears",
+    "label_th": "หู",
+    "options": [
+      {
+        "key": "ears_forward",
+        "ja": "耳が前向き",
+        "en": "Ears forward",
+        "th": "หูชี้ไปข้างหน้า"
+      },
+      {
+        "key": "ears_side",
+        "ja": "耳が横向き",
+        "en": "Ears sideways",
+        "th": "หูหันออกข้าง"
+      },
+      {
+        "key": "ears_back",
+        "ja": "耳が後ろ向き",
+        "en": "Ears back",
+        "th": "หูพับไปข้างหลัง"
+      }
+    ]
+  },
+  {
+    "group": "front_paws",
+    "label_ja": "前足",
+    "label_en": "Front paws",
+    "label_th": "ขาหน้า",
+    "options": [
+      {
+        "key": "kneading",
+        "ja": "ふみふみ",
+        "en": "Kneading",
+        "th": "นวด"
+      },
+      {
+        "key": "paw_tense",
+        "ja": "前足に力が入る",
+        "en": "Front paws tense",
+        "th": "ขาหน้าเกร็ง"
+      },
+      {
+        "key": "paw_lift",
+        "ja": "前足を少し上げる",
+        "en": "One paw slightly lifted",
+        "th": "ยกขาหน้าขึ้นเล็กน้อย"
+      }
+    ]
+  },
+  {
+    "group": "tail",
+    "label_ja": "しっぽ",
+    "label_en": "Tail",
+    "label_th": "หาง",
+    "options": [
+      {
+        "key": "tail_up",
+        "ja": "しっぽを立てる",
+        "en": "Tail upright",
+        "th": "หางตั้งตรง"
+      },
+      {
+        "key": "tail_tip_move",
+        "ja": "しっぽの先だけ動く",
+        "en": "Tail tip moving",
+        "th": "ปลายหางขยับ"
+      },
+      {
+        "key": "tail_fast",
+        "ja": "しっぽを激しく振る",
+        "en": "Tail swishing fast",
+        "th": "หางสะบัดแรง"
+      },
+      {
+        "key": "tail_tucked",
+        "ja": "しっぽを巻く",
+        "en": "Tail tucked",
+        "th": "หางหุบ"
+      }
+    ]
+  },
+  {
+    "group": "body",
+    "label_ja": "体",
+    "label_en": "Body",
+    "label_th": "ลำตัว",
+    "options": [
+      {
+        "key": "loaf",
+        "ja": "香箱座り",
+        "en": "Loaf position",
+        "th": "นั่งเก็บขา"
+      },
+      {
+        "key": "body_low",
+        "ja": "体を低くする",
+        "en": "Body low",
+        "th": "ลำตัวต่ำ"
+      },
+      {
+        "key": "belly_up",
+        "ja": "お腹を見せる",
+        "en": "Belly up",
+        "th": "โชว์พุง"
+      },
+      {
+        "key": "stretch",
+        "ja": "伸びをする",
+        "en": "Stretching",
+        "th": "ยืดตัว"
+      }
+    ]
+  }
+]
