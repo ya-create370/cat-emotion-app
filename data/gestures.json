@@ -69,3 +69,52 @@
     ]
   }
 ]
+,
+{
+  "id": "G010",
+  "key": "tail_up",
+  "cat": "tail",
+  "ja": "しっぽを立てる",
+  "en": "Upright Tail",
+  "th": "หางตั้งตรง",
+  "emotion": ["Affectionate", "Relaxed"],
+  "advice": {
+    "ja": "優しく声をかけてあげましょう",
+    "en": "Greet your cat gently",
+    "th": "ทักทายน้องอย่างอ่อนโยน"
+  },
+  "src": ["PetMD", "Wikipedia"],
+  "confidence": "high"
+},
+{
+  "id": "G011",
+  "key": "flattened_ears",
+  "cat": "ear",
+  "ja": "イカ耳",
+  "en": "Flattened Ears",
+  "th": "หูพับไปข้างหลัง",
+  "emotion": ["Irritated", "Fearful"],
+  "advice": {
+    "ja": "少し距離を置きましょう",
+    "en": "Give your cat some space",
+    "th": "ควรเว้นระยะห่าง"
+  },
+  "src": ["Cats.com"],
+  "confidence": "high"
+},
+{
+  "id": "G012",
+  "key": "purring",
+  "cat": "voice",
+  "ja": "ゴロゴロ音",
+  "en": "Purring",
+  "th": "เสียงคราง",
+  "emotion": ["Relaxed", "Self-calming"],
+  "advice": {
+    "ja": "様子を見て安心させてあげましょう",
+    "en": "Observe and comfort your cat",
+    "th": "สังเกตและทำให้น้องสบายใจ"
+  },
+  "src": ["Cats.com"],
+  "confidence": "medium"
+}
