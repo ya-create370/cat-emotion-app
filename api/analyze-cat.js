@@ -86,8 +86,15 @@ Return only JSON.
     return res.status(200).json(json);
 
   } catch (error) {
-    return res.status(500).json({
-      error: error.message || "Internal server error"
+  const msg = error.message || "Internal server error";
+
+  if (msg.includes("429") || msg.includes("RESOURCE_EXHAUSTED")) {
+    return res.status(429).json({
+      error: "Gemini無料枠の上限に達しました。1分ほど待ってから再度お試しください。"
     });
   }
+
+  return res.status(500).json({
+    error: msg
+  });
 }
