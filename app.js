@@ -155,14 +155,57 @@ imageInput.addEventListener("change", async (e) => {
 
   fileStatus.textContent = file.name;
   fileStatus.dataset.hasFile = "1";
-  currentMimeType = file.type || "image/jpeg";
 
   const reader = new FileReader();
+
   reader.onload = () => {
-    const dataUrl = reader.result;
-    currentImageBase64 = dataUrl.split(",")[1];
-    preview.innerHTML = `<img src="${dataUrl}" alt="preview" style="max-width:100%; border-radius:12px;">`;
+    const img = new Image();
+
+    img.onload = () => {
+      const maxW = 1200;
+      const maxH = 1200;
+
+      let { width, height } = img;
+
+      if (width > maxW || height > maxH) {
+        const ratio = Math.min(maxW / width, maxH / height);
+        width = Math.round(width * ratio);
+        height = Math.round(height * ratio);
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, width, height);
+
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+
+      currentImageBase64 = dataUrl.split(",")[1];
+      currentMimeType = "image/jpeg";
+
+      preview.innerHTML = `
+        <img 
+          src="${dataUrl}" 
+          alt="preview" 
+          style="max-width:100%; border-radius:12px;"
+        >
+      `;
+    };
+
+    img.onerror = () => {
+      resultBox.innerHTML = `
+        <div class="result-card">
+          <h3>画像エラー</h3>
+          <p>画像の読み込みに失敗しました。</p>
+        </div>
+      `;
+    };
+
+    img.src = reader.result;
   };
+
   reader.readAsDataURL(file);
 });
 
@@ -217,6 +260,7 @@ async function analyzePhotoWithAI() {
   resultBox.innerHTML = `
     <div class="result-card">
       <h3>${text("aiLoading")}</h3>
+      <p>少し待ってください…</p>
     </div>
   `;
 
@@ -235,29 +279,37 @@ async function analyzePhotoWithAI() {
     const rawText = await response.text();
 
     console.log("API status:", response.status);
-    console.log("API raw:", rawText);
+    console.log("API raw response:", rawText);
 
     let data;
     try {
       data = JSON.parse(rawText);
-    } catch {
-      throw new Error("JSONじゃないレスポンス: " + rawText);
+    } catch (e) {
+      throw new Error("APIがJSONを返していません: " + rawText);
     }
 
     if (!response.ok) {
-      throw new Error(data.error || "APIエラー");
+      throw new Error(data.error || `HTTP ${response.status}`);
     }
 
     applyAIResultToSelectors(data.features || {});
     analyzeSelection();
 
   } catch (error) {
-    console.error(error);
+    console.error("AI解析エラー:", error);
+
+    let message = error.message || "不明なエラーです";
+
+    if (message.includes("429") || message.includes("RESOURCE_EXHAUSTED")) {
+      message = "Gemini無料枠の上限です。1分ほど待ってからもう一度試してください。";
+    } else if (message.includes("Failed to fetch")) {
+      message = "通信に失敗しました。少し待ってから再試行してください。";
+    }
 
     resultBox.innerHTML = `
       <div class="result-card">
-        <h3>AIエラー</h3>
-        <p>${error.message}</p>
+        <h3>${text("aiError")}</h3>
+        <p>${message}</p>
       </div>
     `;
   }
