@@ -1,41 +1,90 @@
+import { GoogleGenAI } from "@google/genai";
+
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
+
 export default async function handler(req, res) {
   // CORS対応
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // プリフライト対応
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
 
-  // POST以外は拒否
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const { imageBase64, mimeType } = req.body || {};
+    const { imageBase64, mimeType = "image/jpeg" } = req.body || {};
 
     if (!imageBase64) {
       return res.status(400).json({ error: "imageBase64 is required" });
     }
 
-    // ここではまず固定値を返して、通信と画面連携だけ確認する
-    return res.status(200).json({
-      features: {
-        ears: "forward",
-        eyes: "soft",
-        pupils: "large",
-        tail: "up",
-        body: "relaxed"
+    const prompt = `
+You are an expert in cat body-language observation.
+
+Analyze the cat in the image and estimate visible behavioral features.
+
+Return only JSON.
+Do not explain outside JSON.
+If something cannot be judged, use "unknown".
+
+Output schema:
+{
+  "features": {
+    "ears": "forward|sideways|back|flat|unknown",
+    "eyes": "soft|wide|half_closed|staring|unknown",
+    "pupils": "normal|large|small|unknown",
+    "tail": "up|down|tucked|puffed|relaxed|unknown",
+    "body": "relaxed|low|tense|arched|unknown",
+    "fur": "normal|puffed|unknown",
+    "mouth": "closed|open|hissing|unknown"
+  },
+  "confidence": 0,
+  "summary_ja": "",
+  "summary_en": "",
+  "summary_th": ""
+}
+
+Rules:
+- Judge only what is visually inferable from the image.
+- Never invent hidden information.
+- confidence must be an integer from 0 to 100.
+- Keep summaries short.
+`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-2.0-flash",
+      contents: [
+        {
+          inlineData: {
+            mimeType,
+            data: imageBase64,
+          },
+        },
+        {
+          text: prompt,
+        },
+      ],
+      config: {
+        responseMimeType: "application/json",
+        temperature: 0.2,
+        maxOutputTokens: 500,
       },
-      confidence: 80,
-      summary_ja: "テスト応答です",
-      summary_en: "Test response",
-      summary_th: "ผลลัพธ์ทดสอบ"
     });
+
+    const text = response.text;
+    const json = JSON.parse(text);
+
+    return res.status(200).json(json);
+
   } catch (error) {
+    console.error("analyze-cat error:", error);
     return res.status(500).json({
       error: error.message || "Internal server error"
     });
