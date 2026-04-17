@@ -1,4 +1,4 @@
-const API_URL = "https://あなたのVercelURL/api/analyze-cat"; // ←ここだけ自分のVercel URLに変更
+const API_URL = "https://cat-emotion-app-s2nt.vercel.app/api/analyze-cat";
 
 const langSelect = document.getElementById("langSelect");
 const imageInput = document.getElementById("imageInput");
