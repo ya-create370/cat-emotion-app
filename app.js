@@ -4,13 +4,65 @@ const preview = document.getElementById("preview");
 const manualArea = document.getElementById("manualArea");
 const resultBox = document.getElementById("result");
 
+const appTitle = document.getElementById("appTitle");
+const languageLabel = document.getElementById("languageLabel");
+const photoTitle = document.getElementById("photoTitle");
+const manualTitle = document.getElementById("manualTitle");
+const manualDescription = document.getElementById("manualDescription");
+
 let currentLang = "ja";
 let featuresData = [];
 
-function t(ja, en, th) {
-  if (currentLang === "en") return en;
-  if (currentLang === "th") return th;
-  return ja;
+const uiText = {
+  ja: {
+    appTitle: "🐱 猫の気持ちアプリ",
+    languageLabel: "言語",
+    photoTitle: "写真でみる",
+    manualTitle: "手動でえらぶ",
+    manualDescription: "猫の状態を選んでください",
+    chooseOne: "選んでください",
+    analyze: "判定する",
+    result: "判定結果",
+    selectedFeatures: "選んだ特徴",
+    error: "エラー",
+    featureLoadError: "features.json を読み込めませんでした。",
+    hardToJudge: "まだ判定がむずかしいです",
+    notEnough: "今の選択だけでは、まだ気持ちをはっきり決めきれません。目・耳・しっぽ・体をもう少し組み合わせると、より深く読めます。"
+  },
+  en: {
+    appTitle: "🐱 Cat Emotion App",
+    languageLabel: "Language",
+    photoTitle: "Check by Photo",
+    manualTitle: "Choose Manually",
+    manualDescription: "Please choose your cat's signs",
+    chooseOne: "Choose one",
+    analyze: "Analyze",
+    result: "Result",
+    selectedFeatures: "Selected Features",
+    error: "Error",
+    featureLoadError: "Could not load features.json.",
+    hardToJudge: "Still Hard to Judge",
+    notEnough: "The current selection is not enough yet. Try combining more signs from the eyes, ears, tail, and body."
+  },
+  th: {
+    appTitle: "🐱 แอปอ่านอารมณ์แมว",
+    languageLabel: "ภาษา",
+    photoTitle: "ดูจากรูปภาพ",
+    manualTitle: "เลือกเอง",
+    manualDescription: "กรุณาเลือกลักษณะของแมว",
+    chooseOne: "กรุณาเลือก",
+    analyze: "วิเคราะห์",
+    result: "ผลการวิเคราะห์",
+    selectedFeatures: "ลักษณะที่เลือก",
+    error: "ข้อผิดพลาด",
+    featureLoadError: "ไม่สามารถโหลด features.json ได้",
+    hardToJudge: "ยังวิเคราะห์ได้ไม่ชัดเจน",
+    notEnough: "ข้อมูลที่เลือกตอนนี้ยังไม่พอ ลองเลือกดวงตา หู หาง และลำตัวเพิ่ม เพื่อวิเคราะห์ได้แม่นขึ้น"
+  }
+};
+
+function text(key) {
+  return uiText[currentLang][key];
 }
 
 function getOptionText(option) {
@@ -25,25 +77,29 @@ function getGroupLabel(group) {
   return group.label_ja;
 }
 
+function updateStaticText() {
+  appTitle.textContent = text("appTitle");
+  languageLabel.textContent = text("languageLabel");
+  photoTitle.textContent = text("photoTitle");
+  manualTitle.textContent = text("manualTitle");
+  manualDescription.textContent = text("manualDescription");
+  document.title = text("appTitle").replace("🐱 ", "");
+}
+
 async function loadFeatures() {
   try {
     const res = await fetch("./data/features.json");
-    if (!res.ok) {
-      throw new Error("features.json could not be loaded");
-    }
-
+    if (!res.ok) throw new Error("features.json could not be loaded");
     featuresData = await res.json();
+    updateStaticText();
     renderManualSelectors();
   } catch (error) {
     console.error(error);
+    updateStaticText();
     resultBox.innerHTML = `
       <div class="result-card">
-        <h3>${t("エラー", "Error", "ข้อผิดพลาด")}</h3>
-        <p>${t(
-          "features.json を読み込めませんでした。",
-          "Could not load features.json.",
-          "ไม่สามารถโหลด features.json ได้"
-        )}</p>
+        <h3>${text("error")}</h3>
+        <p>${text("featureLoadError")}</p>
       </div>
     `;
   }
@@ -64,11 +120,7 @@ function renderManualSelectors() {
 
     const emptyOption = document.createElement("option");
     emptyOption.value = "";
-    emptyOption.textContent = t(
-      "選んでください",
-      "Choose one",
-      "กรุณาเลือก"
-    );
+    emptyOption.textContent = text("chooseOne");
     select.appendChild(emptyOption);
 
     group.options.forEach((option) => {
@@ -84,7 +136,7 @@ function renderManualSelectors() {
   });
 
   const button = document.createElement("button");
-  button.textContent = t("判定する", "Analyze", "วิเคราะห์");
+  button.textContent = text("analyze");
   button.addEventListener("click", analyzeSelection);
 
   manualArea.appendChild(button);
@@ -294,15 +346,15 @@ function judgeEmotion(selected) {
 
   return {
     title: {
-      ja: "まだ判定がむずかしいです",
-      en: "Still Hard to Judge",
-      th: "ยังวิเคราะห์ได้ไม่ชัดเจน"
+      ja: text("hardToJudge"),
+      en: text("hardToJudge"),
+      th: text("hardToJudge")
     },
     message: {
-      ja: "今の選択だけでは、まだ気持ちをはっきり決めきれません。目・耳・しっぽ・体をもう少し組み合わせると、より深く読めます。",
-      en: "The current selection is not enough yet. Try combining more signs from the eyes, ears, tail, and body.",
-      th: "ข้อมูลที่เลือกตอนนี้ยังไม่พอ ลองเลือกดวงตา หู หาง และลำตัวเพิ่ม เพื่อวิเคราะห์ได้แม่นขึ้น"
-    };
+      ja: uiText.ja.notEnough,
+      en: uiText.en.notEnough,
+      th: uiText.th.notEnough
+    }
   };
 }
 
@@ -325,12 +377,12 @@ function renderResult(result, selected) {
 
   resultBox.innerHTML = `
     <div class="result-card">
-      <h3>${currentLang === "ja" ? result.title.ja : currentLang === "en" ? result.title.en : result.title.th}</h3>
-      <p>${currentLang === "ja" ? result.message.ja : currentLang === "en" ? result.message.en : result.message.th}</p>
+      <h3>${result.title[currentLang]}</h3>
+      <p>${result.message[currentLang]}</p>
       ${
         selectedItems
           ? `
-          <p><strong>${t("選んだ特徴", "Selected Features", "ลักษณะที่เลือก")}</strong></p>
+          <p><strong>${text("selectedFeatures")}</strong></p>
           <ul>${selectedItems}</ul>
         `
           : ""
@@ -342,11 +394,9 @@ function renderResult(result, selected) {
 if (langSelect) {
   langSelect.addEventListener("change", (e) => {
     currentLang = e.target.value;
+    updateStaticText();
     renderManualSelectors();
-
-    if (resultBox.innerHTML.trim() !== "") {
-      resultBox.innerHTML = "";
-    }
+    resultBox.innerHTML = "";
   });
 }
 
