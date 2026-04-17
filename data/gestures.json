@@ -1,0 +1,71 @@
+[
+  {
+    "id": "G001",
+    "gesture_key": "slow_blink",
+    "gesture_name_ja": "ゆっくり瞬き",
+    "gesture_name_en": "Slow Blink",
+    "gesture_name_th": "กะพริบตาช้าๆ",
+    "emotion_primary": "Relaxed",
+    "emotion_secondary": "Affectionate",
+    "emotion_caution": "Sleepy",
+    "advice_ja": "ゆっくり瞬きを返して、安心していることを伝えましょう。",
+    "advice_en": "Blink back slowly to show calm and trust.",
+    "advice_th": "กะพริบตาตอบช้าๆ เพื่อแสดงความเป็นมิตรและความสบายใจ",
+    "summary_ja": "安心や信頼のサインとしてよく知られています。",
+    "summary_en": "Often seen as a sign of calm and trust.",
+    "summary_th": "มักถูกมองว่าเป็นสัญญาณของความสบายใจและความไว้ใจ",
+    "citation_note_ja": "複数の行動学資料で信頼のサインとして紹介されています。",
+    "citation_note_en": "Multiple behavior sources describe this as a trust signal.",
+    "citation_note_th": "หลายแหล่งข้อมูลด้านพฤติกรรมระบุว่านี่คือสัญญาณของความไว้ใจ",
+    "source_titles": [
+      "University of Sussex",
+      "Cats.com"
+    ]
+  },
+  {
+    "id": "G002",
+    "gesture_key": "upright_tail",
+    "gesture_name_ja": "しっぽを立てる",
+    "gesture_name_en": "Upright Tail",
+    "gesture_name_th": "หางตั้งตรง",
+    "emotion_primary": "Affectionate",
+    "emotion_secondary": "Happy",
+    "emotion_caution": "Excited",
+    "advice_ja": "やさしく声をかけて、あいさつを返してあげましょう。",
+    "advice_en": "Gently greet your cat back.",
+    "advice_th": "ทักทายน้องกลับด้วยน้ำเสียงอ่อนโยน",
+    "summary_ja": "友好的なあいさつや歓迎の可能性があります。",
+    "summary_en": "May mean a friendly greeting or welcome.",
+    "summary_th": "อาจหมายถึงการทักทายหรือการต้อนรับอย่างเป็นมิตร",
+    "citation_note_ja": "複数の猫行動資料で友好的なしぐさとして扱われています。",
+    "citation_note_en": "Commonly listed as a friendly social gesture.",
+    "citation_note_th": "มักถูกจัดว่าเป็นท่าทางทางสังคมที่เป็นมิตร",
+    "source_titles": [
+      "PetMD",
+      "Cats Protection"
+    ]
+  },
+  {
+    "id": "G003",
+    "gesture_key": "flattened_ears",
+    "gesture_name_ja": "イカ耳",
+    "gesture_name_en": "Flattened Ears",
+    "gesture_name_th": "หูพับไปข้างหลัง",
+    "emotion_primary": "Irritated",
+    "emotion_secondary": "Fearful",
+    "emotion_caution": "Pain",
+    "advice_ja": "今はそっとして、少し距離をあけましょう。",
+    "advice_en": "Give your cat some space for now.",
+    "advice_th": "ตอนนี้ควรเว้นระยะห่างและปล่อยให้น้องสงบก่อน",
+    "summary_ja": "不快や警戒の可能性があります。",
+    "summary_en": "May signal discomfort or caution.",
+    "summary_th": "อาจเป็นสัญญาณของความไม่สบายใจหรือการระวังตัว",
+    "citation_note_ja": "拒絶や不快のサインとして広く紹介されています。",
+    "citation_note_en": "Widely described as a sign of discomfort or rejection.",
+    "citation_note_th": "หลายแหล่งอธิบายว่าเป็นสัญญาณของความไม่สบายใจหรือการปฏิเสธ",
+    "source_titles": [
+      "Catster",
+      "Cats.com"
+    ]
+  }
+]
