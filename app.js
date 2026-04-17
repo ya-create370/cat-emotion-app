@@ -232,19 +232,31 @@ async function analyzePhotoWithAI() {
       })
     });
 
-    const data = await response.json();
+    const rawText = await response.text();
+
+    console.log("API status:", response.status);
+    console.log("API raw:", rawText);
+
+    let data;
+    try {
+      data = JSON.parse(rawText);
+    } catch {
+      throw new Error("JSONじゃないレスポンス: " + rawText);
+    }
 
     if (!response.ok) {
-      throw new Error(data.error || "API error");
+      throw new Error(data.error || "APIエラー");
     }
 
     applyAIResultToSelectors(data.features || {});
     analyzeSelection();
 
   } catch (error) {
+    console.error(error);
+
     resultBox.innerHTML = `
       <div class="result-card">
-        <h3>${text("aiError")}</h3>
+        <h3>AIエラー</h3>
         <p>${error.message}</p>
       </div>
     `;
