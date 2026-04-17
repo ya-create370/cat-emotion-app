@@ -1,4 +1,4 @@
-const API_URL = "https://cat-emotion-app-s2nt.vercel.app/api/analyze-cat";
+const API_URL = "https://cat-emotion-app.vercel.app/api/analyze-cat";
 
 const langSelect = document.getElementById("langSelect");
 const imageInput = document.getElementById("imageInput");
