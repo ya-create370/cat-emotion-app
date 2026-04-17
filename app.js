@@ -1,23 +1,184 @@
-const uiText={ja:{uploadTitle:"写真でみる",uploadHelp:"猫の写真をえらんでください。あとでAIをつなげられる形にしてあります。",uploadButtonText:"写真をえらぶ",previewPlaceholder:"ここに写真が表示されます",manualTitle:"手動でえらぶ",manualHelp:"AIがまちがっても、あとで手でなおせるようにします。",gestureLabel:"しぐさ",showResultButton:"結果を見る",resultTitle:"結果",resultEmpty:"まだ結果はありません",emptySelect:"-- えらんでください --",resultMaybe:"気持ちの可能性",resultAdvice:"おすすめ",resultSource:"出典",noSelection:"先にしぐさをえらんでください。"},en:{uploadTitle:"See by Photo",uploadHelp:"Choose a cat photo. This app is prepared so AI can be added later.",uploadButtonText:"Choose a photo",previewPlaceholder:"Your photo will appear here",manualTitle:"Choose Manually",manualHelp:"If AI is wrong later, you can fix it by hand.",gestureLabel:"Gesture",showResultButton:"Show Result",resultTitle:"Result",resultEmpty:"No result yet",emptySelect:"-- Please choose --",resultMaybe:"Possible feeling",resultAdvice:"Advice",resultSource:"Sources",noSelection:"Please choose a gesture first."},th:{uploadTitle:"ดูจากรูปภาพ",uploadHelp:"เลือกรูปแมวได้เลย แอปนี้เตรียมไว้ให้ต่อ AI เพิ่มทีหลังได้",uploadButtonText:"เลือกรูปภาพ",previewPlaceholder:"รูปภาพจะแสดงที่นี่",manualTitle:"เลือกเอง",manualHelp:"ถ้า AI เดาผิดภายหลัง ผู้ใช้ยังแก้เองได้",gestureLabel:"ท่าทาง",showResultButton:"ดูผลลัพธ์",resultTitle:"ผลลัพธ์",resultEmpty:"ยังไม่มีผลลัพธ์",emptySelect:"-- กรุณาเลือก --",resultMaybe:"ความรู้สึกที่เป็นไปได้",resultAdvice:"คำแนะนำ",resultSource:"แหล่งอ้างอิง",noSelection:"กรุณาเลือกท่าทางก่อน"}};
-let currentLanguage="ja";let gestureData=[];
-const imageInput=document.getElementById("imageInput"),previewImage=document.getElementById("previewImage"),previewPlaceholder=document.getElementById("previewPlaceholder"),languageSelect=document.getElementById("languageSelect"),gestureSelect=document.getElementById("gestureSelect"),showResultButton=document.getElementById("showResultButton"),resultBox=document.getElementById("resultBox");
-function setText(id,val){const e=document.getElementById(id);if(e)e.textContent=val}
-function applyLanguage(){const t=uiText[currentLanguage];["uploadTitle","uploadHelp","uploadButtonText","previewPlaceholder","manualTitle","manualHelp","gestureLabel","showResultButton","resultTitle"].forEach(id=>setText(id,t[id]));if(!resultBox.dataset.hasResult){resultBox.innerHTML=`<p id="resultEmpty">${t.resultEmpty}</p>`}renderGestureOptions()}
-function renderGestureOptions(){const t=uiText[currentLanguage],currentValue=gestureSelect.value;gestureSelect.innerHTML="";const def=document.createElement("option");def.value="";def.textContent=t.emptySelect;gestureSelect.appendChild(def);gestureData.forEach(item=>{const opt=document.createElement("option");opt.value=item.gesture_key;opt.textContent=item[`gesture_name_${currentLanguage}`];gestureSelect.appendChild(opt)});gestureSelect.value=currentValue||""}
-function showImagePreview(file){const reader=new FileReader();reader.onload=(event)=>{previewImage.src=event.target.result;previewImage.hidden=false;previewPlaceholder.hidden=true};reader.readAsDataURL(file)}
-function renderResult(item){const t=uiText[currentLanguage];resultBox.dataset.hasResult="true";resultBox.innerHTML=`<div class="result-item"><h3>${item[`gesture_name_${currentLanguage}`]}</h3><p><strong>${t.resultMaybe}:</strong> ${item.emotion_primary}</p><p>${item[`summary_${currentLanguage}`]}</p><p><strong>${t.resultAdvice}:</strong> ${item[`advice_${currentLanguage}`]}</p><p class="meta">${item[`citation_note_${currentLanguage}`]}</p><p><strong>${t.resultSource}:</strong></p><ul class="source-list">${item.source_titles.map(s=>`<li>${s}</li>`).join("")}</ul></div>`}
-async function loadGestureData(){const response=await fetch("./data/gestures.json");gestureData=await response.json();renderGestureOptions()}
-imageInput.addEventListener("change",()=>{const file=imageInput.files[0];if(file)showImagePreview(file)});
-languageSelect.addEventListener("change",e=>{currentLanguage=e.target.value;applyLanguage()});
-showResultButton.addEventListener("click",()=>{const key=gestureSelect.value;if(!key){alert(uiText[currentLanguage].noSelection);return}const item=gestureData.find(i=>i.gesture_key===key);if(item)renderResult(item)});
-if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("./service-worker.js").catch(err=>console.log("Service worker registration failed:",err))})}
-loadGestureData().then(applyLanguage);
-function renderResult(item) {
-  const box = document.getElementById('result');
-  box.innerHTML = `
-    <h3>💡 ${item.ja}</h3>
-    <p>可能性：${item.emotion.join(' / ')}</p>
-    <p>👉 ${item.advice.ja}</p>
-    <p style="font-size:12px;color:#666">出典: ${item.src.join(', ')}</p>
+const langSelect = document.getElementById("langSelect");
+const imageInput = document.getElementById("imageInput");
+const preview = document.getElementById("preview");
+const manualArea = document.getElementById("manualArea");
+const resultBox = document.getElementById("result");
+
+let currentLang = "ja";
+let featuresData = [];
+
+const groupNames = {
+  ja: {
+    eyes: "目",
+    ears: "耳",
+    front_paws: "前足",
+    tail: "しっぽ",
+    body: "体"
+  },
+  en: {
+    eyes: "Eyes",
+    ears: "Ears",
+    front_paws: "Front paws",
+    tail: "Tail",
+    body: "Body"
+  },
+  th: {
+    eyes: "ดวงตา",
+    ears: "หู",
+    front_paws: "ขาหน้า",
+    tail: "หาง",
+    body: "ลำตัว"
+  }
+};
+
+function getText(item) {
+  if (currentLang === "en") return item.en;
+  if (currentLang === "th") return item.th;
+  return item.ja;
+}
+
+async function loadFeatures() {
+  const res = await fetch("./data/features.json");
+  featuresData = await res.json();
+  renderManualSelectors();
+}
+
+function renderManualSelectors() {
+  manualArea.innerHTML = "";
+
+  featuresData.forEach(group => {
+    const wrap = document.createElement("div");
+    wrap.className = "feature-group";
+
+    const label = document.createElement("label");
+    label.textContent = getText({
+      ja: group.label_ja,
+      en: group.label_en,
+      th: group.label_th
+    });
+
+    const select = document.createElement("select");
+    select.dataset.group = group.group;
+
+    const empty = document.createElement("option");
+    empty.value = "";
+    empty.textContent =
+      currentLang === "ja" ? "選んでください" :
+      currentLang === "en" ? "Choose one" :
+      "กรุณาเลือก";
+    select.appendChild(empty);
+
+    group.options.forEach(option => {
+      const op = document.createElement("option");
+      op.value = option.key;
+      op.textContent = getText(option);
+      select.appendChild(op);
+    });
+
+    wrap.appendChild(label);
+    wrap.appendChild(select);
+    manualArea.appendChild(wrap);
+  });
+
+  const button = document.createElement("button");
+  button.textContent =
+    currentLang === "ja" ? "判定する" :
+    currentLang === "en" ? "Analyze" :
+    "วิเคราะห์";
+  button.onclick = analyzeSelection;
+
+  manualArea.appendChild(button);
+}
+
+function analyzeSelection() {
+  const selects = manualArea.querySelectorAll("select");
+  const selected = {};
+
+  selects.forEach(select => {
+    if (select.value) {
+      selected[select.dataset.group] = select.value;
+    }
+  });
+
+  const result = judgeEmotion(selected);
+  renderResult(result, selected);
+}
+
+function judgeEmotion(selected) {
+  const values = Object.values(selected);
+
+  if (values.includes("slow_blink") && values.includes("tail_up")) {
+    return {
+      ja: "リラックスしていて、あなたを信頼している可能性があります。",
+      en: "Your cat may feel relaxed and trust you.",
+      th: "น้องอาจกำลังรู้สึกผ่อนคลายและไว้ใจคุณ"
+    };
+  }
+
+  if (values.includes("ears_back") && values.includes("tail_tucked")) {
+    return {
+      ja: "不安や恐怖を感じている可能性があります。少し距離を置きましょう。",
+      en: "Your cat may feel anxious or scared. Give them some space.",
+      th: "น้องอาจกำลังกังวลหรือกลัว ควรเว้นระยะห่าง"
+    };
+  }
+
+  if (values.includes("pupils_large") && values.includes("tail_tip_move")) {
+    return {
+      ja: "興味や集中が高まっている可能性があります。",
+      en: "Your cat may be highly curious or focused.",
+      th: "น้องอาจกำลังสนใจหรือจดจ่อมากเป็นพิเศษ"
+    };
+  }
+
+  if (values.includes("kneading")) {
+    return {
+      ja: "安心して甘えたい気分かもしれません。",
+      en: "Your cat may feel safe and affectionate.",
+      th: "น้องอาจกำลังรู้สึกปลอดภัยและอยากอ้อน"
+    };
+  }
+
+  return {
+    ja: "いくつかのサインから、今の気持ちをまだはっきり決めきれません。別の部位も選んでみてください。",
+    en: "The current signs are not enough yet. Try selecting more features.",
+    th: "สัญญาณตอนนี้ยังไม่พอ ลองเลือกจุดสังเกตเพิ่มเติม"
+  };
+}
+
+function renderResult(result, selected) {
+  const selectedList = Object.entries(selected).map(([group, key]) => {
+    const groupData = featuresData.find(g => g.group === group);
+    const optionData = groupData?.options.find(o => o.key === key);
+    return `
+      <li><strong>${groupNames[currentLang][group]}:</strong> ${optionData ? getText(optionData) : key}</li>
+    `;
+  }).join("");
+
+  resultBox.innerHTML = `
+    <div class="result-card">
+      <h3>${currentLang === "ja" ? "判定結果" : currentLang === "en" ? "Result" : "ผลการวิเคราะห์"}</h3>
+      <p>${currentLang === "ja" ? result.ja : currentLang === "en" ? result.en : result.th}</p>
+      <ul>${selectedList}</ul>
+    </div>
   `;
 }
+
+langSelect.addEventListener("change", e => {
+  currentLang = e.target.value;
+  renderManualSelectors();
+});
+
+imageInput.addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    preview.src = event.target.result;
+    preview.style.display = "block";
+  };
+  reader.readAsDataURL(file);
+});
+
+loadFeatures();
