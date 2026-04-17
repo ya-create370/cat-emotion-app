@@ -1,120 +1,122 @@
 [
-  {
-    "id": "G001",
-    "gesture_key": "slow_blink",
-    "gesture_name_ja": "ゆっくり瞬き",
-    "gesture_name_en": "Slow Blink",
-    "gesture_name_th": "กะพริบตาช้าๆ",
-    "emotion_primary": "Relaxed",
-    "emotion_secondary": "Affectionate",
-    "emotion_caution": "Sleepy",
-    "advice_ja": "ゆっくり瞬きを返して、安心していることを伝えましょう。",
-    "advice_en": "Blink back slowly to show calm and trust.",
-    "advice_th": "กะพริบตาตอบช้าๆ เพื่อแสดงความเป็นมิตรและความสบายใจ",
-    "summary_ja": "安心や信頼のサインとしてよく知られています。",
-    "summary_en": "Often seen as a sign of calm and trust.",
-    "summary_th": "มักถูกมองว่าเป็นสัญญาณของความสบายใจและความไว้ใจ",
-    "citation_note_ja": "複数の行動学資料で信頼のサインとして紹介されています。",
-    "citation_note_en": "Multiple behavior sources describe this as a trust signal.",
-    "citation_note_th": "หลายแหล่งข้อมูลด้านพฤติกรรมระบุว่านี่คือสัญญาณของความไว้ใจ",
-    "source_titles": [
-      "University of Sussex",
-      "Cats.com"
-    ]
-  },
-  {
-    "id": "G002",
-    "gesture_key": "upright_tail",
-    "gesture_name_ja": "しっぽを立てる",
-    "gesture_name_en": "Upright Tail",
-    "gesture_name_th": "หางตั้งตรง",
-    "emotion_primary": "Affectionate",
-    "emotion_secondary": "Happy",
-    "emotion_caution": "Excited",
-    "advice_ja": "やさしく声をかけて、あいさつを返してあげましょう。",
-    "advice_en": "Gently greet your cat back.",
-    "advice_th": "ทักทายน้องกลับด้วยน้ำเสียงอ่อนโยน",
-    "summary_ja": "友好的なあいさつや歓迎の可能性があります。",
-    "summary_en": "May mean a friendly greeting or welcome.",
-    "summary_th": "อาจหมายถึงการทักทายหรือการต้อนรับอย่างเป็นมิตร",
-    "citation_note_ja": "複数の猫行動資料で友好的なしぐさとして扱われています。",
-    "citation_note_en": "Commonly listed as a friendly social gesture.",
-    "citation_note_th": "มักถูกจัดว่าเป็นท่าทางทางสังคมที่เป็นมิตร",
-    "source_titles": [
-      "PetMD",
-      "Cats Protection"
-    ]
-  },
-  {
-    "id": "G003",
-    "gesture_key": "flattened_ears",
-    "gesture_name_ja": "イカ耳",
-    "gesture_name_en": "Flattened Ears",
-    "gesture_name_th": "หูพับไปข้างหลัง",
-    "emotion_primary": "Irritated",
-    "emotion_secondary": "Fearful",
-    "emotion_caution": "Pain",
-    "advice_ja": "今はそっとして、少し距離をあけましょう。",
-    "advice_en": "Give your cat some space for now.",
-    "advice_th": "ตอนนี้ควรเว้นระยะห่างและปล่อยให้น้องสงบก่อน",
-    "summary_ja": "不快や警戒の可能性があります。",
-    "summary_en": "May signal discomfort or caution.",
-    "summary_th": "อาจเป็นสัญญาณของความไม่สบายใจหรือการระวังตัว",
-    "citation_note_ja": "拒絶や不快のサインとして広く紹介されています。",
-    "citation_note_en": "Widely described as a sign of discomfort or rejection.",
-    "citation_note_th": "หลายแหล่งอธิบายว่าเป็นสัญญาณของความไม่สบายใจหรือการปฏิเสธ",
-    "source_titles": [
-      "Catster",
-      "Cats.com"
-    ]
-  }
-]
-,
 {
-  "id": "G010",
-  "key": "tail_up",
-  "cat": "tail",
-  "ja": "しっぽを立てる",
-  "en": "Upright Tail",
-  "th": "หางตั้งตรง",
-  "emotion": ["Affectionate", "Relaxed"],
-  "advice": {
-    "ja": "優しく声をかけてあげましょう",
-    "en": "Greet your cat gently",
-    "th": "ทักทายน้องอย่างอ่อนโยน"
-  },
-  "src": ["PetMD", "Wikipedia"],
-  "confidence": "high"
+"id":"G001","key":"slow_blink","ja":"ゆっくり瞬き","en":"Slow Blink","th":"กะพริบตาช้าๆ",
+"emotion":["リラックス","信頼"],
+"advice":{"ja":"瞬きを返してあげましょう","en":"Blink back","th":"กะพริบตาตอบ"},
+"src":["研究資料"],"confidence":"高"
 },
 {
-  "id": "G011",
-  "key": "flattened_ears",
-  "cat": "ear",
-  "ja": "イカ耳",
-  "en": "Flattened Ears",
-  "th": "หูพับไปข้างหลัง",
-  "emotion": ["Irritated", "Fearful"],
-  "advice": {
-    "ja": "少し距離を置きましょう",
-    "en": "Give your cat some space",
-    "th": "ควรเว้นระยะห่าง"
-  },
-  "src": ["Cats.com"],
-  "confidence": "high"
+"id":"G002","key":"upright_tail","ja":"しっぽを立てる","en":"Upright Tail","th":"หางตั้ง",
+"emotion":["挨拶","喜び"],
+"advice":{"ja":"優しく声をかける","en":"Greet gently","th":"ทักทายอย่างอ่อนโยน"},
+"src":["一般知識"],"confidence":"高"
 },
 {
-  "id": "G012",
-  "key": "purring",
-  "cat": "voice",
-  "ja": "ゴロゴロ音",
-  "en": "Purring",
-  "th": "เสียงคราง",
-  "emotion": ["Relaxed", "Self-calming"],
-  "advice": {
-    "ja": "様子を見て安心させてあげましょう",
-    "en": "Observe and comfort your cat",
-    "th": "สังเกตและทำให้น้องสบายใจ"
-  },
-  "src": ["Cats.com"],
-  "confidence": "medium"
+"id":"G003","key":"flattened_ears","ja":"イカ耳","en":"Flattened Ears","th":"หูพับ",
+"emotion":["警戒","怒り"],
+"advice":{"ja":"少し距離を置く","en":"Give space","th":"เว้นระยะ"},
+"src":["行動学"],"confidence":"高"
+},
+{
+"id":"G004","key":"purring","ja":"ゴロゴロ","en":"Purring","th":"คราง",
+"emotion":["安心","自己鎮静"],
+"advice":{"ja":"様子を見る","en":"Observe","th":"สังเกต"},
+"src":["研究"],"confidence":"中"
+},
+{
+"id":"G005","key":"kneading","ja":"ふみふみ","en":"Kneading","th":"นวด",
+"emotion":["甘え","安心"],
+"advice":{"ja":"見守る","en":"Let them","th":"ปล่อยให้น้องทำ"},
+"src":["一般"],"confidence":"高"
+},
+{
+"id":"G006","key":"belly_up","ja":"お腹見せ","en":"Belly Up","th":"โชว์พุง",
+"emotion":["信頼","遊び"],
+"advice":{"ja":"無理に触らない","en":"Don't force touch","th":"อย่าฝืนจับ"},
+"src":["一般"],"confidence":"高"
+},
+{
+"id":"G007","key":"tail_swish","ja":"しっぽを振る","en":"Tail Swish","th":"หางแกว่ง",
+"emotion":["イライラ","興奮"],
+"advice":{"ja":"触らない","en":"Avoid touching","th":"อย่าแตะ"},
+"src":["行動"],"confidence":"高"
+},
+{
+"id":"G008","key":"tail_tip","ja":"しっぽ先だけ動く","en":"Tail Tip","th":"ปลายหาง",
+"emotion":["興味","集中"],
+"advice":{"ja":"様子を見る","en":"Watch","th":"ดูต่อ"},
+"src":["一般"],"confidence":"高"
+},
+{
+"id":"G009","key":"tail_between","ja":"しっぽを巻く","en":"Tail Tucked","th":"หางหุบ",
+"emotion":["恐怖","不安"],
+"advice":{"ja":"安心させる","en":"Calm them","th":"ทำให้น้องสบายใจ"},
+"src":["一般"],"confidence":"高"
+},
+{
+"id":"G010","key":"head_butt","ja":"頭突き","en":"Head Butt","th":"เอาหัวชน",
+"emotion":["愛情","挨拶"],
+"advice":{"ja":"優しく返す","en":"Respond gently","th":"ตอบกลับอย่างอ่อนโยน"},
+"src":["一般"],"confidence":"高"
+},
+{
+"id":"G011","key":"lick_nose","ja":"鼻舐め","en":"Nose Lick","th":"เลียจมูก",
+"emotion":["緊張","不安"],
+"advice":{"ja":"刺激を減らす","en":"Reduce stress","th":"ลดสิ่งกระตุ้น"},
+"src":["行動"],"confidence":"中"
+},
+{
+"id":"G012","key":"hide","ja":"隠れる","en":"Hiding","th":"ซ่อนตัว",
+"emotion":["恐怖","ストレス"],
+"advice":{"ja":"そっとする","en":"Leave alone","th":"ปล่อยให้อยู่เงียบๆ"},
+"src":["行動"],"confidence":"高"
+},
+{
+"id":"G013","key":"stretch","ja":"伸び","en":"Stretch","th":"ยืดตัว",
+"emotion":["リラックス"],
+"advice":{"ja":"安心状態","en":"Relaxed","th":"ผ่อนคลาย"},
+"src":["一般"],"confidence":"高"
+},
+{
+"id":"G014","key":"loaf","ja":"香箱座り","en":"Loaf","th":"ท่านั่งก้อน",
+"emotion":["安心"],
+"advice":{"ja":"落ち着いている","en":"Calm","th":"สงบ"},
+"src":["一般"],"confidence":"高"
+},
+{
+"id":"G015","key":"low_posture","ja":"低い姿勢","en":"Low Posture","th":"ก้มต่ำ",
+"emotion":["警戒"],
+"advice":{"ja":"刺激しない","en":"Don't刺激","th":"อย่ารบกวน"},
+"src":["行動"],"confidence":"高"
+},
+{
+"id":"G016","key":"meow_short","ja":"短いニャー","en":"Short Meow","th":"เมี้ยวสั้น",
+"emotion":["挨拶"],
+"advice":{"ja":"返事する","en":"Respond","th":"ตอบกลับ"},
+"src":["一般"],"confidence":"高"
+},
+{
+"id":"G017","key":"meow_long","ja":"長いニャー","en":"Long Meow","th":"เมี้ยวยาว",
+"emotion":["要求"],
+"advice":{"ja":"様子確認","en":"Check needs","th":"ดูว่าน้องต้องการอะไร"},
+"src":["一般"],"confidence":"高"
+},
+{
+"id":"G018","key":"hiss","ja":"シャー","en":"Hiss","th":"ขู่",
+"emotion":["怒り","防御"],
+"advice":{"ja":"近づかない","en":"Stay away","th":"อย่าเข้าใกล้"},
+"src":["行動"],"confidence":"高"
+},
+{
+"id":"G019","key":"slow_tail","ja":"ゆっくりしっぽ","en":"Slow Tail","th":"หางช้า",
+"emotion":["リラックス"],
+"advice":{"ja":"安心状態","en":"Relaxed","th":"ผ่อนคลาย"},
+"src":["一般"],"confidence":"高"
+},
+{
+"id":"G020","key":"stare","ja":"じっと見る","en":"Stare","th":"จ้อง",
+"emotion":["集中","警戒"],
+"advice":{"ja":"状況を見る","en":"Observe","th":"สังเกต"},
+"src":["行動"],"confidence":"中"
 }
+]
