@@ -69,55 +69,6 @@
         "en": "Kneading",
         "th": "นวด"
       },
-      ,
-{
-  "key": "ghost_pose",
-  "ja": "前足を浮かせる（幽霊ポーズ）",
-  "en": "Ghost pose (paws up)",
-  "th": "ยกขาหน้าเหมือนผี"
-},
-{
-  "key": "face_cover",
-  "ja": "顔を隠す",
-  "en": "Covering face",
-  "th": "เอามือปิดหน้า"
-},
-{
-  "key": "paw_cross",
-  "ja": "前足をクロスする",
-  "en": "Crossed paws",
-  "th": "ไขว้ขาหน้า"
-},
-{
-  "key": "paw_touch_face",
-  "ja": "相手の顔に前足を当てる",
-  "en": "Touching face",
-  "th": "เอาขาแตะหน้า"
-},
-{
-  "key": "paw_push",
-  "ja": "足で押す",
-  "en": "Pushing with paw",
-  "th": "ใช้ขาผลัก"
-},
-{
-  "key": "claws_out",
-  "ja": "爪を立てる",
-  "en": "Claws out",
-  "th": "กางเล็บ"
-},
-{
-  "key": "hands_up",
-  "ja": "万歳ポーズ",
-  "en": "Hands up pose",
-  "th": "ยกขาขึ้นเหมือนยอมแพ้"
-},
-{
-  "key": "grab_hold",
-  "ja": "つかんで離さない",
-  "en": "Grabbing and holding",
-  "th": "จับแล้วไม่ปล่อย"
-},
       {
         "key": "paw_tense",
         "ja": "前足に力が入る",
@@ -129,6 +80,54 @@
         "ja": "前足を少し上げる",
         "en": "One paw slightly lifted",
         "th": "ยกขาหน้าขึ้นเล็กน้อย"
+      },
+      {
+        "key": "ghost_pose",
+        "ja": "前足を浮かせる（幽霊ポーズ）",
+        "en": "Ghost pose (paws up)",
+        "th": "ยกขาหน้าเหมือนผี"
+      },
+      {
+        "key": "face_cover",
+        "ja": "顔を隠す",
+        "en": "Covering face",
+        "th": "เอามือปิดหน้า"
+      },
+      {
+        "key": "paw_cross",
+        "ja": "前足をクロスする",
+        "en": "Crossed paws",
+        "th": "ไขว้ขาหน้า"
+      },
+      {
+        "key": "paw_touch_face",
+        "ja": "相手の顔に前足を当てる",
+        "en": "Touching face",
+        "th": "เอาขาแตะหน้า"
+      },
+      {
+        "key": "paw_push",
+        "ja": "足で押す",
+        "en": "Pushing with paw",
+        "th": "ใช้ขาผลัก"
+      },
+      {
+        "key": "claws_out",
+        "ja": "爪を立てる",
+        "en": "Claws out",
+        "th": "กางเล็บ"
+      },
+      {
+        "key": "hands_up",
+        "ja": "万歳ポーズ",
+        "en": "Hands up pose",
+        "th": "ยกขาขึ้นเหมือนยอมแพ้"
+      },
+      {
+        "key": "grab_hold",
+        "ja": "つかんで離さない",
+        "en": "Grabbing and holding",
+        "th": "จับแล้วไม่ปล่อย"
       }
     ]
   },
