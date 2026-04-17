@@ -12,3 +12,12 @@ languageSelect.addEventListener("change",e=>{currentLanguage=e.target.value;appl
 showResultButton.addEventListener("click",()=>{const key=gestureSelect.value;if(!key){alert(uiText[currentLanguage].noSelection);return}const item=gestureData.find(i=>i.gesture_key===key);if(item)renderResult(item)});
 if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("./service-worker.js").catch(err=>console.log("Service worker registration failed:",err))})}
 loadGestureData().then(applyLanguage);
+function renderResult(item) {
+  const box = document.getElementById('result');
+  box.innerHTML = `
+    <h3>💡 ${item.ja}</h3>
+    <p>可能性：${item.emotion.join(' / ')}</p>
+    <p>👉 ${item.advice.ja}</p>
+    <p style="font-size:12px;color:#666">出典: ${item.src.join(', ')}</p>
+  `;
+}
