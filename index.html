@@ -1,62 +1,86 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cat Emotion App</title>
-  <meta name="theme-color" content="#f6f1ff" />
-  <link rel="manifest" href="./manifest.json" />
-  <link rel="stylesheet" href="./styles.css" />
+
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 16px;
+      background: #f5f5f5;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .box {
+      background: white;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      font-size: 16px;
+      border-radius: 8px;
+    }
+
+    img {
+      width: 100%;
+      margin-top: 10px;
+      border-radius: 10px;
+    }
+
+    .result-card {
+      background: #e8f5e9;
+      padding: 12px;
+      border-radius: 10px;
+    }
+  </style>
 </head>
+
 <body>
-  <div class="app-shell">
-    <header class="app-header">
-      <h1>🐱 Cat Emotion App</h1>
-      <p class="subtitle">写真アップロード + 手動選択で猫の気持ちを見てみよう</p>
-      <div class="top-bar">
-        <label for="languageSelect" class="label-inline">言語</label>
-        <select id="languageSelect" aria-label="Language">
-          <option value="ja">日本語</option>
-          <option value="en">English</option>
-          <option value="th">ไทย</option>
-        </select>
-      </div>
-    </header>
 
-    <main class="main-content">
-      <section class="card">
-        <h2 id="uploadTitle">写真でみる</h2>
-        <p id="uploadHelp">猫の写真をえらんでください。あとでAIをつなげられる形にしてあります。</p>
-        <label class="upload-area" for="imageInput">
-          <span id="uploadButtonText">写真をえらぶ</span>
-          <input id="imageInput" type="file" accept="image/*" />
-        </label>
-        <div class="preview-wrap">
-          <img id="previewImage" alt="猫のプレビュー" hidden />
-          <p id="previewPlaceholder">ここに写真が表示されます</p>
-        </div>
-      </section>
+  <h1>🐱 Cat Emotion App</h1>
 
-      <section class="card">
-        <h2 id="manualTitle">手動でえらぶ</h2>
-        <p id="manualHelp">AIがまちがっても、あとで手でなおせるようにします。</p>
-        <div class="field-group">
-          <label for="gestureSelect" id="gestureLabel">しぐさ</label>
-          <select id="gestureSelect">
-            <option value="">-- えらんでください --</option>
-          </select>
-        </div>
-        <button id="showResultButton" class="primary-button">結果を見る</button>
-      </section>
-
-      <section class="card result-card">
-        <h2 id="resultTitle">結果</h2>
-        <div id="resultBox">
-          <p id="resultEmpty">まだ結果はありません</p>
-        </div>
-      </section>
-    </main>
+  <!-- 言語 -->
+  <div class="box">
+    <label>言語</label>
+    <select id="langSelect">
+      <option value="ja">日本語</option>
+      <option value="en">English</option>
+      <option value="th">ไทย</option>
+    </select>
   </div>
-  <script src="./app.js"></script>
+
+  <!-- 写真 -->
+  <div class="box">
+    <h2>写真でみる</h2>
+    <input type="file" id="imageInput" accept="image/*">
+    <img id="preview" style="display:none;">
+  </div>
+
+  <!-- 手動選択 -->
+  <div class="box">
+    <h2>手動でえらぶ</h2>
+    <p>猫の状態を選んでください</p>
+
+    <div id="manualArea"></div>
+  </div>
+
+  <!-- 結果 -->
+  <div class="box">
+    <div id="result"></div>
+  </div>
+
+  <!-- JS -->
+  <script src="app.js"></script>
+
 </body>
 </html>
