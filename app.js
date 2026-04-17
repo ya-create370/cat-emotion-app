@@ -22,6 +22,8 @@ const uiText = {
     photoTitle: "写真でみる",
     manualTitle: "手動でえらぶ",
     manualDescription: "猫の状態を選んでください",
+    fileLabel: "ファイルを選択",
+    fileNone: "ファイル未選択",
     chooseOne: "選んでください",
     analyze: "判定する",
     result: "判定結果",
@@ -29,7 +31,8 @@ const uiText = {
     error: "エラー",
     featureLoadError: "features.json を読み込めませんでした。",
     hardToJudge: "まだ判定がむずかしいです",
-    notEnough: "今の選択だけでは、まだ気持ちをはっきり決めきれません。目・耳・しっぽ・体をもう少し組み合わせると、より深く読めます。"
+    notEnough:
+      "今の選択だけでは、まだ気持ちをはっきり決めきれません。目・耳・しっぽ・体をもう少し組み合わせると、より深く読めます。"
   },
   en: {
     appTitle: "🐱 Cat Emotion App",
@@ -37,6 +40,8 @@ const uiText = {
     photoTitle: "Check by Photo",
     manualTitle: "Choose Manually",
     manualDescription: "Please choose your cat's signs",
+    fileLabel: "Choose File",
+    fileNone: "No file selected",
     chooseOne: "Choose one",
     analyze: "Analyze",
     result: "Result",
@@ -44,7 +49,8 @@ const uiText = {
     error: "Error",
     featureLoadError: "Could not load features.json.",
     hardToJudge: "Still Hard to Judge",
-    notEnough: "The current selection is not enough yet. Try combining more signs from the eyes, ears, tail, and body."
+    notEnough:
+      "The current selection is not enough yet. Try combining more signs from the eyes, ears, tail, and body."
   },
   th: {
     appTitle: "🐱 แอปอ่านอารมณ์แมว",
@@ -52,6 +58,8 @@ const uiText = {
     photoTitle: "ดูจากรูปภาพ",
     manualTitle: "เลือกเอง",
     manualDescription: "กรุณาเลือกลักษณะของแมว",
+    fileLabel: "เลือกไฟล์",
+    fileNone: "ยังไม่ได้เลือกไฟล์",
     chooseOne: "กรุณาเลือก",
     analyze: "วิเคราะห์",
     result: "ผลการวิเคราะห์",
@@ -59,7 +67,8 @@ const uiText = {
     error: "ข้อผิดพลาด",
     featureLoadError: "ไม่สามารถโหลด features.json ได้",
     hardToJudge: "ยังวิเคราะห์ได้ไม่ชัดเจน",
-    notEnough: "ข้อมูลที่เลือกตอนนี้ยังไม่พอ ลองเลือกดวงตา หู หาง และลำตัวเพิ่ม เพื่อวิเคราะห์ได้แม่นขึ้น"
+    notEnough:
+      "ข้อมูลที่เลือกตอนนี้ยังไม่พอ ลองเลือกดวงตา หู หาง และลำตัวเพิ่ม เพื่อวิเคราะห์ได้แม่นขึ้น"
   }
 };
 
@@ -80,18 +89,27 @@ function getGroupLabel(group) {
 }
 
 function updateStaticText() {
-  appTitle.textContent = text("appTitle");
-  languageLabel.textContent = text("languageLabel");
-  photoTitle.textContent = text("photoTitle");
-  manualTitle.textContent = text("manualTitle");
-  manualDescription.textContent = text("manualDescription");
+  if (appTitle) appTitle.textContent = text("appTitle");
+  if (languageLabel) languageLabel.textContent = text("languageLabel");
+  if (photoTitle) photoTitle.textContent = text("photoTitle");
+  if (manualTitle) manualTitle.textContent = text("manualTitle");
+  if (manualDescription) manualDescription.textContent = text("manualDescription");
+  if (fileLabel) fileLabel.textContent = text("fileLabel");
+
+  if (fileStatus && !fileStatus.dataset.hasFile) {
+    fileStatus.textContent = text("fileNone");
+  }
+
   document.title = text("appTitle").replace("🐱 ", "");
 }
 
 async function loadFeatures() {
   try {
     const res = await fetch("./data/features.json");
-    if (!res.ok) throw new Error("features.json could not be loaded");
+    if (!res.ok) {
+      throw new Error("features.json could not be loaded");
+    }
+
     featuresData = await res.json();
     updateStaticText();
     renderManualSelectors();
@@ -348,9 +366,9 @@ function judgeEmotion(selected) {
 
   return {
     title: {
-      ja: text("hardToJudge"),
-      en: text("hardToJudge"),
-      th: text("hardToJudge")
+      ja: uiText.ja.hardToJudge,
+      en: uiText.en.hardToJudge,
+      th: uiText.th.hardToJudge
     },
     message: {
       ja: uiText.ja.notEnough,
@@ -386,7 +404,7 @@ function renderResult(result, selected) {
           ? `
           <p><strong>${text("selectedFeatures")}</strong></p>
           <ul>${selectedItems}</ul>
-        `
+          `
           : ""
       }
     </div>
@@ -405,7 +423,19 @@ if (langSelect) {
 if (imageInput) {
   imageInput.addEventListener("change", (e) => {
     const file = e.target.files[0];
-    if (!file) return;
+
+    if (!file) {
+      if (fileStatus) {
+        fileStatus.textContent = text("fileNone");
+        delete fileStatus.dataset.hasFile;
+      }
+      return;
+    }
+
+    if (fileStatus) {
+      fileStatus.textContent = file.name;
+      fileStatus.dataset.hasFile = "true";
+    }
 
     const reader = new FileReader();
     reader.onload = function(event) {
