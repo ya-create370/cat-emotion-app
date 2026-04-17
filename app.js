@@ -26,8 +26,8 @@ const uiText = {
     fileNone: "ファイル未選択",
     chooseOne: "選んでください",
     analyze: "判定する",
-    result: "判定結果",
     selectedFeatures: "選んだ特徴",
+    whyTitle: "なぜこの判定？",
     error: "エラー",
     featureLoadError: "features.json を読み込めませんでした。",
     hardToJudge: "まだ判定がむずかしいです",
@@ -44,8 +44,8 @@ const uiText = {
     fileNone: "No file selected",
     chooseOne: "Choose one",
     analyze: "Analyze",
-    result: "Result",
     selectedFeatures: "Selected Features",
+    whyTitle: "Why this result?",
     error: "Error",
     featureLoadError: "Could not load features.json.",
     hardToJudge: "Still Hard to Judge",
@@ -62,8 +62,8 @@ const uiText = {
     fileNone: "ยังไม่ได้เลือกไฟล์",
     chooseOne: "กรุณาเลือก",
     analyze: "วิเคราะห์",
-    result: "ผลการวิเคราะห์",
     selectedFeatures: "ลักษณะที่เลือก",
+    whyTitle: "ทำไมจึงวิเคราะห์แบบนี้?",
     error: "ข้อผิดพลาด",
     featureLoadError: "ไม่สามารถโหลด features.json ได้",
     hardToJudge: "ยังวิเคราะห์ได้ไม่ชัดเจน",
@@ -192,9 +192,14 @@ function judgeEmotion(selected) {
         th: "อาจกำลังกังวลหรือกลัว"
       },
       message: {
-        ja: "耳が後ろ向きか横向きで、しっぽを巻き、体も低いので、不安や恐怖を感じている可能性があります。まずはそっとして安心できる距離を取りましょう。",
-        en: "With the ears back or sideways, tail tucked, and body low, your cat may be feeling anxious or scared. Give them space and help them feel safe.",
-        th: "เมื่อหูพับหรือหันออกข้าง หางหุบ และลำตัวต่ำ น้องอาจกำลังกังวลหรือกลัว ควรเว้นระยะและช่วยให้น้องรู้สึกปลอดภัย"
+        ja: "不安や恐怖を感じている可能性があります。まずはそっとして安心できる距離を取りましょう。",
+        en: "Your cat may be feeling anxious or scared. Give them space and help them feel safe.",
+        th: "น้องอาจกำลังกังวลหรือกลัว ควรเว้นระยะและช่วยให้น้องรู้สึกปลอดภัย"
+      },
+      why: {
+        ja: "耳が後ろや横を向き、しっぽを巻き、体も低くしているためです。",
+        en: "Because the ears are back or sideways, the tail is tucked, and the body is low.",
+        th: "เพราะหูพับหรือหันออกข้าง หางหุบ และลำตัวต่ำ"
       }
     };
   }
@@ -211,9 +216,14 @@ function judgeEmotion(selected) {
         th: "อาจกำลังสนใจและจดจ่อ"
       },
       message: {
-        ja: "目が大きく、耳が前を向き、しっぽの先だけ動いているので、何かに強く興味を持って集中している可能性があります。遊びや観察モードかもしれません。",
-        en: "With wide eyes, ears forward, and the tail tip moving, your cat may be highly focused and interested in something. This may be play or hunting mode.",
-        th: "เมื่อตาเบิกกว้าง หูชี้ไปข้างหน้า และปลายหางขยับ น้องอาจกำลังสนใจบางอย่างมาก และอยู่ในโหมดเล่นหรือจ้องเหยื่อ"
+        ja: "何かに強く興味を持って集中している可能性があります。遊びや観察モードかもしれません。",
+        en: "Your cat may be highly focused and interested in something. This may be play or hunting mode.",
+        th: "น้องอาจกำลังสนใจบางอย่างมาก และอยู่ในโหมดเล่นหรือจ้องเหยื่อ"
+      },
+      why: {
+        ja: "目が大きく、耳が前向きで、しっぽの先だけ動いているためです。",
+        en: "Because the eyes are wide, the ears are forward, and the tail tip is moving.",
+        th: "เพราะตาเบิกกว้าง หูชี้ไปข้างหน้า และปลายหางขยับ"
       }
     };
   }
@@ -229,9 +239,14 @@ function judgeEmotion(selected) {
         th: "อาจกำลังผ่อนคลายและไว้ใจ"
       },
       message: {
-        ja: "ゆっくり瞬きをしながら、しっぽを立てたり、香箱座りや伸びをしているので、かなりリラックスしていて、あなたを信頼している可能性があります。",
-        en: "With a slow blink plus an upright tail, loaf position, or stretching, your cat may be quite relaxed and trusting.",
-        th: "เมื่อกะพริบตาช้าๆ พร้อมกับหางตั้ง นั่งเก็บขา หรือยืดตัว น้องอาจกำลังผ่อนคลายและไว้ใจคุณมาก"
+        ja: "かなりリラックスしていて、あなたを信頼している可能性があります。",
+        en: "Your cat may be quite relaxed and trusting.",
+        th: "น้องอาจกำลังผ่อนคลายและไว้ใจคุณมาก"
+      },
+      why: {
+        ja: "ゆっくり瞬きに加えて、しっぽを立てる、香箱座り、伸びのような安心寄りのサインがあるためです。",
+        en: "Because there is a slow blink along with calm signs such as an upright tail, loaf position, or stretching.",
+        th: "เพราะมีการกะพริบตาช้าๆ ร่วมกับสัญญาณผ่อนคลาย เช่น หางตั้ง นั่งเก็บขา หรือยืดตัว"
       }
     };
   }
@@ -247,9 +262,14 @@ function judgeEmotion(selected) {
         th: "อาจกำลังอ้อนและรู้สึกปลอดภัย"
       },
       message: {
-        ja: "ふみふみをしながら、ゆっくり瞬きやしっぽを立てる動き、お腹を見せる様子があるので、安心して甘えたい気分かもしれません。",
-        en: "With kneading plus a slow blink, upright tail, or belly-up posture, your cat may feel safe and affectionate.",
-        th: "เมื่อน้องนวด พร้อมกับกะพริบตาช้าๆ หางตั้ง หรือโชว์พุง น้องอาจกำลังรู้สึกปลอดภัยและอยากอ้อน"
+        ja: "安心して甘えたい気分かもしれません。",
+        en: "Your cat may feel safe and affectionate.",
+        th: "น้องอาจกำลังรู้สึกปลอดภัยและอยากอ้อน"
+      },
+      why: {
+        ja: "ふみふみに加えて、ゆっくり瞬き、しっぽを立てる、お腹を見せるなどの安心サインがあるためです。",
+        en: "Because kneading appears together with safe signs like a slow blink, upright tail, or belly-up posture.",
+        th: "เพราะมีการนวดร่วมกับสัญญาณปลอดภัย เช่น กะพริบตาช้าๆ หางตั้ง หรือโชว์พุง"
       }
     };
   }
@@ -265,9 +285,14 @@ function judgeEmotion(selected) {
         th: "อาจกำลังหงุดหงิดหรือไม่สบายใจ"
       },
       message: {
-        ja: "耳が後ろや横を向き、しっぽを激しく振っているので、不快やイライラのサインかもしれません。今は無理に触らない方がよさそうです。",
-        en: "With the ears back or sideways and the tail swishing fast, your cat may be irritated or uncomfortable. It is better not to touch them right now.",
-        th: "เมื่อหูพับหรือหันออกข้าง และหางสะบัดแรง น้องอาจกำลังหงุดหงิดหรือไม่สบายใจ ตอนนี้ไม่ควรฝืนจับ"
+        ja: "不快やイライラのサインかもしれません。今は無理に触らない方がよさそうです。",
+        en: "Your cat may be irritated or uncomfortable. It is better not to touch them right now.",
+        th: "น้องอาจกำลังหงุดหงิดหรือไม่สบายใจ ตอนนี้ไม่ควรฝืนจับ"
+      },
+      why: {
+        ja: "耳が後ろや横を向き、しっぽを激しく振っているためです。",
+        en: "Because the ears are back or sideways and the tail is swishing fast.",
+        th: "เพราะหูพับหรือหันออกข้าง และหางสะบัดแรง"
       }
     };
   }
@@ -284,9 +309,14 @@ function judgeEmotion(selected) {
         th: "อาจกำลังตั้งรับและเครียดมาก"
       },
       message: {
-        ja: "耳が後ろ向きで、しっぽを激しく振り、体も低くしているので、防御的でかなり緊張している可能性があります。近づきすぎない方が安全です。",
-        en: "With the ears back, tail swishing fast, and body low, your cat may be defensive and highly tense. It is safer not to get too close.",
-        th: "เมื่อหูพับ หางสะบัดแรง และลำตัวต่ำ น้องอาจกำลังตั้งรับและเครียดมาก ควรหลีกเลี่ยงการเข้าใกล้เกินไป"
+        ja: "防御的でかなり緊張している可能性があります。近づきすぎない方が安全です。",
+        en: "Your cat may be defensive and highly tense. It is safer not to get too close.",
+        th: "น้องอาจกำลังตั้งรับและเครียดมาก ควรหลีกเลี่ยงการเข้าใกล้เกินไป"
+      },
+      why: {
+        ja: "耳が後ろ向きで、しっぽを激しく振り、体も低くしているためです。",
+        en: "Because the ears are back, the tail is swishing fast, and the body is low.",
+        th: "เพราะหูพับ หางสะบัดแรง และลำตัวต่ำ"
       }
     };
   }
@@ -302,9 +332,14 @@ function judgeEmotion(selected) {
         th: "อาจกำลังระวังตัวเล็กน้อย"
       },
       message: {
-        ja: "目が大きく、耳が横向きだったり体が低かったりするので、少し警戒している可能性があります。周りの音や人、環境を気にしているのかもしれません。",
-        en: "With wide eyes plus sideways ears or a low body posture, your cat may be slightly alert or cautious. They may be reacting to the environment.",
-        th: "เมื่อตาเบิกกว้าง พร้อมหูหันออกข้างหรือลำตัวต่ำ น้องอาจกำลังระวังตัวเล็กน้อย และกำลังสนใจสิ่งรอบตัว"
+        ja: "少し警戒している可能性があります。周りの音や人、環境を気にしているのかもしれません。",
+        en: "Your cat may be slightly alert or cautious. They may be reacting to the environment.",
+        th: "น้องอาจกำลังระวังตัวเล็กน้อย และกำลังสนใจสิ่งรอบตัว"
+      },
+      why: {
+        ja: "目が大きく、耳が横向きだったり体が低かったりするためです。",
+        en: "Because the eyes are wide and there are cautious signs such as sideways ears or a low body posture.",
+        th: "เพราะตาเบิกกว้าง และมีสัญญาณระวังตัว เช่น หูหันออกข้างหรือลำตัวต่ำ"
       }
     };
   }
@@ -321,9 +356,14 @@ function judgeEmotion(selected) {
         th: "อาจกำลังพักอย่างสงบ"
       },
       message: {
-        ja: "香箱座りで、強い緊張サインもないので、今は落ち着いて休んでいる可能性があります。",
-        en: "With a loaf position and no strong tension signs, your cat may be calmly resting right now.",
-        th: "เมื่ออยู่ในท่านั่งเก็บขา และไม่มีสัญญาณตึงเครียดชัดเจน น้องอาจกำลังพักอย่างสงบ"
+        ja: "今は落ち着いて休んでいる可能性があります。",
+        en: "Your cat may be calmly resting right now.",
+        th: "น้องอาจกำลังพักอย่างสงบ"
+      },
+      why: {
+        ja: "香箱座りで、強い緊張サインが見られないためです。",
+        en: "Because the cat is in a loaf position and there are no strong tension signs.",
+        th: "เพราะน้องอยู่ในท่านั่งเก็บขา และไม่มีสัญญาณตึงเครียดชัดเจน"
       }
     };
   }
@@ -339,9 +379,14 @@ function judgeEmotion(selected) {
         th: "อาจกำลังรู้สึกปลอดภัยมาก"
       },
       message: {
-        ja: "お腹を見せながらゆっくり瞬きをしているので、かなり安心している可能性があります。ただし、お腹を触ってほしいとは限りません。",
-        en: "With a belly-up posture and a slow blink, your cat may feel very safe. But this does not always mean they want belly rubs.",
-        th: "เมื่อโชว์พุงพร้อมกะพริบตาช้าๆ น้องอาจรู้สึกปลอดภัยมาก แต่ไม่ได้แปลว่าอยากให้จับพุงเสมอไป"
+        ja: "かなり安心している可能性があります。ただし、お腹を触ってほしいとは限りません。",
+        en: "Your cat may feel very safe. But this does not always mean they want belly rubs.",
+        th: "น้องอาจรู้สึกปลอดภัยมาก แต่ไม่ได้แปลว่าอยากให้จับพุงเสมอไป"
+      },
+      why: {
+        ja: "お腹を見せながら、ゆっくり瞬きをしているためです。",
+        en: "Because the cat is showing the belly while also slow blinking.",
+        th: "เพราะน้องโชว์พุงพร้อมกับกะพริบตาช้าๆ"
       }
     };
   }
@@ -357,9 +402,14 @@ function judgeEmotion(selected) {
         th: "อาจกำลังจดจ่อพร้อมความตึงเครียด"
       },
       message: {
-        ja: "前足に力が入り、目も大きいので、緊張しながら何かに集中している可能性があります。遊びの前か、警戒中かもしれません。",
-        en: "With tense front paws and wide eyes, your cat may be focused while slightly tense. This could be before play or while staying alert.",
-        th: "เมื่อขาหน้าเกร็งและตาเบิกกว้าง น้องอาจกำลังจดจ่อพร้อมความตึงเครียดเล็กน้อย อาจเป็นก่อนเล่นหรือกำลังระวังตัว"
+        ja: "緊張しながら何かに集中している可能性があります。遊びの前か、警戒中かもしれません。",
+        en: "Your cat may be focused while slightly tense. This could be before play or while staying alert.",
+        th: "น้องอาจกำลังจดจ่อพร้อมความตึงเครียดเล็กน้อย อาจเป็นก่อนเล่นหรือกำลังระวังตัว"
+      },
+      why: {
+        ja: "前足に力が入り、目も大きく開いているためです。",
+        en: "Because the front paws look tense and the eyes are wide.",
+        th: "เพราะขาหน้าเกร็งและตาเบิกกว้าง"
       }
     };
   }
@@ -374,6 +424,11 @@ function judgeEmotion(selected) {
       ja: uiText.ja.notEnough,
       en: uiText.en.notEnough,
       th: uiText.th.notEnough
+    },
+    why: {
+      ja: "まだ選ばれた特徴が少なく、組み合わせの情報が足りません。",
+      en: "There are not enough selected features yet to make a clearer guess.",
+      th: "ยังมีลักษณะที่เลือกไม่พอสำหรับการวิเคราะห์ที่ชัดเจนขึ้น"
     }
   };
 }
@@ -399,6 +454,8 @@ function renderResult(result, selected) {
     <div class="result-card">
       <h3>${result.title[currentLang]}</h3>
       <p>${result.message[currentLang]}</p>
+      <p><strong>${text("whyTitle")}</strong></p>
+      <p>${result.why[currentLang]}</p>
       ${
         selectedItems
           ? `
