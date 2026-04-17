@@ -1,11 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
-
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-});
-
 export default async function handler(req, res) {
-  // CORS対応
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -25,16 +18,31 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "imageBase64 is required" });
     }
 
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ error: "GEMINI_API_KEY is missing on Vercel" });
+    }
+
+    let GoogleGenAI;
+    try {
+      const mod = await import("@google/genai");
+      GoogleGenAI = mod.GoogleGenAI;
+    } catch (e) {
+      return res.status(500).json({
+        error: "Package @google/genai is not installed",
+        detail: e.message
+      });
+    }
+
+    const ai = new GoogleGenAI({
+      apiKey: process.env.GEMINI_API_KEY,
+    });
+
     const prompt = `
 You are an expert in cat body-language observation.
-
 Analyze the cat in the image and estimate visible behavioral features.
 
 Return only JSON.
-Do not explain outside JSON.
-If something cannot be judged, use "unknown".
 
-Output schema:
 {
   "features": {
     "ears": "forward|sideways|back|flat|unknown",
@@ -50,12 +58,6 @@ Output schema:
   "summary_en": "",
   "summary_th": ""
 }
-
-Rules:
-- Judge only what is visually inferable from the image.
-- Never invent hidden information.
-- confidence must be an integer from 0 to 100.
-- Keep summaries short.
 `;
 
     const response = await ai.models.generateContent({
@@ -84,7 +86,6 @@ Rules:
     return res.status(200).json(json);
 
   } catch (error) {
-    console.error("analyze-cat error:", error);
     return res.status(500).json({
       error: error.message || "Internal server error"
     });
