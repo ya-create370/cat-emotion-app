@@ -1,0 +1,9 @@
+{
+  "name": "Cat Emotion App",
+  "short_name": "CatEmotion",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f7f5fb",
+  "theme_color": "#f6f1ff",
+  "icons": []
+}
