@@ -9,6 +9,8 @@ const languageLabel = document.getElementById("languageLabel");
 const photoTitle = document.getElementById("photoTitle");
 const manualTitle = document.getElementById("manualTitle");
 const manualDescription = document.getElementById("manualDescription");
+const fileLabel = document.getElementById("fileLabel");
+const fileStatus = document.getElementById("fileStatus");
 
 let currentLang = "ja";
 let featuresData = [];
