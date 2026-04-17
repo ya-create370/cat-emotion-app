@@ -153,6 +153,27 @@ function judgeEmotion(selected) {
     };
   }
 
+  // ⭐ NEW：目細め＋香箱座りでもリラックス判定
+  if (has("eyes_narrow") && has("loaf")) {
+    return {
+      title: {
+        ja: "リラックスの可能性",
+        en: "Relaxed",
+        th: "ผ่อนคลาย"
+      },
+      message: {
+        ja: "落ち着いて休んでいる状態の可能性があります。",
+        en: "Your cat seems calm and resting.",
+        th: "น้องกำลังพักผ่อนอย่างสงบ"
+      },
+      why: {
+        ja: "目を細めていて、香箱座りをしているためです。",
+        en: "Narrowed eyes + loaf position indicate calmness.",
+        th: "ตาหรี่ + นั่งเก็บขา = ผ่อนคลาย"
+      }
+    };
+  }
+
   // ⭐ 部分判定（ここが重要）
   if (has("slow_blink")) {
     return {
