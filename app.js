@@ -186,9 +186,9 @@ imageInput.addEventListener("change", async (e) => {
       currentMimeType = "image/jpeg";
 
       preview.innerHTML = `
-        <img 
-          src="${dataUrl}" 
-          alt="preview" 
+        <img
+          src="${dataUrl}"
+          alt="preview"
           style="max-width:100%; border-radius:12px;"
         >
       `;
