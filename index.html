@@ -62,8 +62,12 @@
   <!-- 写真 -->
   <div class="box">
     <h2 id="photoTitle">写真でみる</h2>
-    <input type="file" id="imageInput" accept="image/*">
-    <img id="preview" style="display:none;">
+<label id="fileLabel">ファイルを選択</label>
+<input type="file" id="imageInput" accept="image/*">
+
+<p id="fileStatus">ファイル未選択</p>
+
+<img id="preview" style="display:none;">
   </div>
 
   <!-- 手動選択 -->
