@@ -1,5 +1,3 @@
-const API_URL = "https://cat-emotion-app.vercel.app/api/analyze-cat";
-
 const langSelect = document.getElementById("langSelect");
 const imageInput = document.getElementById("imageInput");
 const preview = document.getElementById("preview");
@@ -32,11 +30,13 @@ const uiText = {
     analyze: "判定する",
     aiAnalyze: "AIで写真をみる",
     aiLoading: "AIが写真を見ています…",
+    aiDone: "AI候補を入れました。必要なら手で直してから判定してください。",
     selectedFeatures: "選んだ特徴",
+    stateTitle: "状態",
+    emotionTitle: "気持ち",
     whyTitle: "なぜこの判定？",
     noImage: "先に写真を選んでください",
-    aiApplied: "AI候補を選択欄に反映しました。",
-    aiError: "AI解析でエラーが出ました"
+    aiError: "AI判定でエラーが起きました"
   },
   en: {
     appTitle: "🐱 Cat Emotion App",
@@ -50,10 +50,12 @@ const uiText = {
     analyze: "Analyze",
     aiAnalyze: "Analyze Photo with AI",
     aiLoading: "AI is checking the photo...",
+    aiDone: "AI suggestions were added. You can adjust them before analyzing.",
     selectedFeatures: "Selected Features",
+    stateTitle: "State",
+    emotionTitle: "Emotion",
     whyTitle: "Why this result?",
     noImage: "Please choose a photo first",
-    aiApplied: "AI suggestions were applied to the selectors.",
     aiError: "AI analysis failed"
   },
   th: {
@@ -68,11 +70,94 @@ const uiText = {
     analyze: "วิเคราะห์",
     aiAnalyze: "ใช้ AI ดูจากรูป",
     aiLoading: "AI กำลังดูรูปอยู่...",
+    aiDone: "AI ใส่ตัวเลือกให้แล้ว ปรับเองได้ก่อนวิเคราะห์",
     selectedFeatures: "ลักษณะที่เลือก",
+    stateTitle: "สถานะ",
+    emotionTitle: "ความรู้สึก",
     whyTitle: "ทำไมจึงวิเคราะห์แบบนี้?",
     noImage: "กรุณาเลือกรูปก่อน",
-    aiApplied: "AI ใส่ค่าลงในช่องเลือกให้แล้ว",
     aiError: "เกิดข้อผิดพลาดในการวิเคราะห์ด้วย AI"
+  }
+};
+
+const stateLabels = {
+  relaxed: {
+    ja: "リラックス状態",
+    en: "Relaxed State",
+    th: "อยู่ในสภาวะผ่อนคลาย"
+  },
+  sleep_mode: {
+    ja: "眠気モード",
+    en: "Sleep Mode",
+    th: "โหมดง่วงนอน"
+  },
+  tolerating: {
+    ja: "我慢して受け入れ中",
+    en: "Tolerating",
+    th: "กำลังอดทนยอมรับ"
+  },
+  alert: {
+    ja: "警戒モード",
+    en: "Alert Mode",
+    th: "โหมดระวังตัว"
+  },
+  play_mode: {
+    ja: "遊びモード",
+    en: "Play Mode",
+    th: "โหมดเล่น"
+  },
+  dominant: {
+    ja: "余裕・優位モード",
+    en: "Confident / Dominant Mode",
+    th: "โหมดมั่นใจ / เหนือกว่า"
+  },
+  curious: {
+    ja: "興味しんしんモード",
+    en: "Curious Mode",
+    th: "โหมดอยากรู้อยากเห็น"
+  }
+};
+
+const emotionLabels = {
+  relaxed: {
+    ja: "リラックス",
+    en: "Relaxed",
+    th: "ผ่อนคลาย"
+  },
+  sleepy: {
+    ja: "眠い",
+    en: "Sleepy",
+    th: "ง่วง"
+  },
+  observing: {
+    ja: "観察中",
+    en: "Observing",
+    th: "กำลังสังเกต"
+  },
+  cautious: {
+    ja: "警戒",
+    en: "Cautious",
+    th: "ระวังตัว"
+  },
+  annoyed: {
+    ja: "ちょっとイヤ",
+    en: "Annoyed",
+    th: "ไม่ค่อยชอบ"
+  },
+  playful: {
+    ja: "遊びたい",
+    en: "Playful",
+    th: "อยากเล่น"
+  },
+  affectionate: {
+    ja: "甘えたい",
+    en: "Affectionate",
+    th: "อยากอ้อน"
+  },
+  tolerating: {
+    ja: "我慢中",
+    en: "Tolerating",
+    th: "กำลังอดทน"
   }
 };
 
@@ -81,11 +166,15 @@ function text(key) {
 }
 
 function getOptionText(option) {
-  return option[currentLang] || option.ja || option.en || option.th || option.key;
+  return option[currentLang] || option.ja;
 }
 
 function getGroupLabel(group) {
-  return group[`label_${currentLang}`] || group.label_ja || group.group;
+  return group[`label_${currentLang}`] || group.label_ja;
+}
+
+function getLabel(map, key) {
+  return map[key] ? map[key][currentLang] : key;
 }
 
 function updateStaticText() {
@@ -99,6 +188,8 @@ function updateStaticText() {
   if (!fileStatus.dataset.hasFile) {
     fileStatus.textContent = text("fileNone");
   }
+
+  document.title = text("appTitle").replace("🐱 ", "");
 }
 
 async function loadFeatures() {
@@ -149,108 +240,6 @@ function renderManualSelectors() {
   manualArea.appendChild(button);
 }
 
-imageInput.addEventListener("change", async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  fileStatus.textContent = file.name;
-  fileStatus.dataset.hasFile = "1";
-
-  const reader = new FileReader();
-
-  reader.onload = () => {
-    const img = new Image();
-
-    img.onload = () => {
-      const maxW = 1200;
-      const maxH = 1200;
-
-      let { width, height } = img;
-
-      if (width > maxW || height > maxH) {
-        const ratio = Math.min(maxW / width, maxH / height);
-        width = Math.round(width * ratio);
-        height = Math.round(height * ratio);
-      }
-
-      const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, width, height);
-
-      const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
-
-      currentImageBase64 = dataUrl.split(",")[1];
-      currentMimeType = "image/jpeg";
-
-      preview.innerHTML = `
-        <img
-          src="${dataUrl}"
-          alt="preview"
-          style="max-width:100%; border-radius:12px;"
-        >
-      `;
-    };
-
-    img.onerror = () => {
-      resultBox.innerHTML = `
-        <div class="result-card">
-          <h3>画像エラー</h3>
-          <p>画像の読み込みに失敗しました。</p>
-        </div>
-      `;
-    };
-
-    img.src = reader.result;
-  };
-
-  reader.readAsDataURL(file);
-});
-
-const aiMap = {
-  ears: {
-    forward: "ears_forward",
-    sideways: "ears_side",
-    back: "ears_back",
-    flat: "ears_back"
-  },
-  eyes: {
-    soft: "eyes_narrow",
-    wide: "eyes_wide",
-    half_closed: "eyes_narrow",
-    staring: "eyes_wide"
-  },
-  pupils: {
-    normal: "",
-    large: "pupils_large",
-    small: ""
-  },
-  tail: {
-    up: "tail_up",
-    down: "",
-    tucked: "tail_tucked",
-    puffed: "",
-    relaxed: ""
-  },
-  body: {
-    relaxed: "loaf",
-    low: "body_low",
-    tense: "",
-    arched: ""
-  },
-  fur: {
-    normal: "",
-    puffed: ""
-  },
-  mouth: {
-    closed: "",
-    open: "",
-    hissing: ""
-  }
-};
-
 async function analyzePhotoWithAI() {
   if (!currentImageBase64 || !currentMimeType) {
     alert(text("noImage"));
@@ -260,12 +249,11 @@ async function analyzePhotoWithAI() {
   resultBox.innerHTML = `
     <div class="result-card">
       <h3>${text("aiLoading")}</h3>
-      <p>少し待ってください…</p>
     </div>
   `;
 
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch("/api/analyze-cat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -276,57 +264,34 @@ async function analyzePhotoWithAI() {
       })
     });
 
-    const rawText = await response.text();
-
-    console.log("API status:", response.status);
-    console.log("API raw response:", rawText);
-
-    let data;
-    try {
-      data = JSON.parse(rawText);
-    } catch (e) {
-      throw new Error("APIがJSONを返していません: " + rawText);
-    }
-
-    if (!response.ok) {
-      throw new Error(data.error || `HTTP ${response.status}`);
-    }
-
-    applyAIResultToSelectors(data.features || {});
-    analyzeSelection();
-
-  } catch (error) {
-    console.error("AI解析エラー:", error);
-
-    let message = error.message || "不明なエラーです";
-
-    if (message.includes("429") || message.includes("RESOURCE_EXHAUSTED")) {
-      message = "Gemini無料枠の上限です。1分ほど待ってからもう一度試してください。";
-    } else if (message.includes("Failed to fetch")) {
-      message = "通信に失敗しました。少し待ってから再試行してください。";
-    }
+    const data = await response.json();
+    applyAIResultToSelectors(data);
 
     resultBox.innerHTML = `
       <div class="result-card">
+        <h3>${text("aiAnalyze")}</h3>
+        <p>${text("aiDone")}</p>
+      </div>
+    `;
+  } catch (error) {
+    resultBox.innerHTML = `
+      <div class="result-card">
         <h3>${text("aiError")}</h3>
-        <p>${message}</p>
+        <p>${error.message}</p>
       </div>
     `;
   }
 }
 
-function applyAIResultToSelectors(features) {
+function applyAIResultToSelectors(data) {
   const selects = manualArea.querySelectorAll("select");
 
   selects.forEach(select => {
     const group = select.dataset.group;
-    const aiValue = features[group];
+    const value = data[group];
 
-    if (!aiValue || aiValue === "unknown") return;
-
-    const mapped = aiMap[group]?.[aiValue];
-    if (mapped) {
-      select.value = mapped;
+    if (value && value !== "unknown") {
+      select.value = value;
     }
   });
 }
@@ -345,27 +310,326 @@ function analyzeSelection() {
   renderResult(result, selected);
 }
 
-function renderResult(result, selected) {
-  const selectedValues = Object.values(selected);
+function detectState(selected) {
+  const values = Object.values(selected);
+  const has = (k) => values.includes(k);
 
-  resultBox.innerHTML = `
-    <div class="result-card">
-      <h3>${result.title[currentLang]}</h3>
-      <p>${result.message[currentLang]}</p>
-      <hr>
-      <p><strong>${text("selectedFeatures")}:</strong> ${selectedValues.length ? selectedValues.join(", ") : "-"}</p>
-      <p><strong>${text("whyTitle")}:</strong> ${result.why[currentLang]}</p>
-    </div>
-  `;
+  const stateScore = {
+    relaxed: 0,
+    sleep_mode: 0,
+    tolerating: 0,
+    alert: 0,
+    play_mode: 0,
+    dominant: 0,
+    curious: 0
+  };
+
+  const reasons = [];
+
+  if (has("eyes_closed")) {
+    stateScore.sleep_mode += 4;
+    reasons.push({
+      ja: "目を閉じていて眠気が強そうです。",
+      en: "Closed eyes suggest strong sleepiness.",
+      th: "หลับตา บ่งบอกถึงความง่วงอย่างชัดเจน"
+    });
+  }
+
+  if (has("eyes_half_open")) {
+    stateScore.sleep_mode += 2;
+    stateScore.tolerating += 1;
+    reasons.push({
+      ja: "半目は眠さや、少し気が乗らない時にも見られます。",
+      en: "Half-open eyes can appear when sleepy or not fully engaged.",
+      th: "ตาปรืออาจพบได้ตอนง่วงหรือไม่ได้อยากมีส่วนร่วมมากนัก"
+    });
+  }
+
+  if (has("eyes_soft") || has("slow_blink") || has("eyes_narrow")) {
+    stateScore.relaxed += 2;
+    reasons.push({
+      ja: "やわらかい目つきは落ち着きのサインです。",
+      en: "Soft or narrowed eyes suggest calmness.",
+      th: "สายตานุ่มนวลหรือตาหรี่เป็นสัญญาณของความสงบ"
+    });
+  }
+
+  if (has("eyes_wide") || has("pupils_large") || has("eyes_staring")) {
+    stateScore.curious += 2;
+    stateScore.alert += 1;
+    reasons.push({
+      ja: "目が大きい・じっと見るのは興味や注意のサインです。",
+      en: "Wide or staring eyes suggest curiosity or attention.",
+      th: "ตาเบิกกว้างหรือจ้อง บ่งบอกถึงความสนใจหรือการระวัง"
+    });
+  }
+
+  if (has("ears_back_strong")) {
+    stateScore.alert += 3;
+    stateScore.tolerating += 1;
+    reasons.push({
+      ja: "耳が強く後ろならかなり警戒寄りです。",
+      en: "Strongly pinned back ears suggest strong alertness.",
+      th: "หูพับไปด้านหลังชัดเจน แปลว่าระวังตัวมาก"
+    });
+  }
+
+  if (has("ears_back_soft") || has("ears_side") || has("ears_flat_side")) {
+    stateScore.alert += 2;
+    reasons.push({
+      ja: "耳の後ろ・横向きは少し警戒のサインです。",
+      en: "Back or sideways ears suggest caution.",
+      th: "หูไปด้านหลังหรือออกข้าง บ่งบอกถึงความระวัง"
+    });
+  }
+
+  if (has("ears_forward") || has("ears_neutral")) {
+    stateScore.curious += 1;
+    stateScore.relaxed += 1;
+    reasons.push({
+      ja: "耳が普通か前向きで、環境を見ています。",
+      en: "Neutral or forward ears suggest calm attention to the environment.",
+      th: "หูปกติหรือชี้ไปข้างหน้า แปลว่ากำลังรับรู้สิ่งรอบตัวอย่างสงบ"
+    });
+  }
+
+  if (has("held_in_arms")) {
+    stateScore.tolerating += 3;
+    reasons.push({
+      ja: "抱っこ中は我慢して受け入れている可能性があります。",
+      en: "Being held can suggest tolerating contact.",
+      th: "การถูกอุ้มอาจหมายถึงกำลังอดทนยอมรับการสัมผัส"
+    });
+  }
+
+  if (has("paws_hanging")) {
+    stateScore.tolerating += 2;
+    stateScore.relaxed += 1;
+    reasons.push({
+      ja: "前足だらんは脱力か、抱っこを受け入れている時に見られます。",
+      en: "Hanging paws can suggest limp relaxation or tolerating handling.",
+      th: "ขาหน้าห้อยอาจหมายถึงการปล่อยตัวหรือยอมให้จับ"
+    });
+  }
+
+  if (has("paw_cross") || has("paws_crossed")) {
+    stateScore.relaxed += 2;
+    stateScore.dominant += 1;
+    reasons.push({
+      ja: "前足クロスは余裕や落ち着きの印象があります。",
+      en: "Crossed paws suggest poise and calmness.",
+      th: "การไขว้ขาหน้าสื่อถึงความนิ่งและดูมีความมั่นใจ"
+    });
+  }
+
+  if (has("paw_lift") || has("ghost_pose")) {
+    stateScore.curious += 2;
+    stateScore.alert += 1;
+    reasons.push({
+      ja: "前足を少し上げるのは様子見や興味のサインです。",
+      en: "A lifted paw suggests curiosity or cautious observation.",
+      th: "การยกขาหน้าสื่อถึงการสังเกตหรือความสนใจ"
+    });
+  }
+
+  if (has("paws_holding") || has("grab_hold") || has("paw_touch_face")) {
+    stateScore.play_mode += 3;
+    stateScore.curious += 1;
+    reasons.push({
+      ja: "つかむ動きは遊びや関わりたい気持ちが出やすいです。",
+      en: "Holding or grabbing suggests play or engagement.",
+      th: "การจับหรือกอดบ่งบอกถึงความอยากเล่นหรือมีปฏิสัมพันธ์"
+    });
+  }
+
+  if (has("paws_pushing") || has("paw_push") || has("claws_out")) {
+    stateScore.alert += 2;
+    stateScore.tolerating += 1;
+    reasons.push({
+      ja: "押す・爪を出す動きは距離を取りたいサインのことがあります。",
+      en: "Pushing or claws out can suggest wanting space.",
+      th: "การผลักหรือกางเล็บอาจหมายถึงต้องการระยะห่าง"
+    });
+  }
+
+  if (has("loaf")) {
+    stateScore.relaxed += 2;
+    reasons.push({
+      ja: "香箱座りは安心して落ち着いている時に多いです。",
+      en: "Loaf position often appears when a cat feels calm and safe.",
+      th: "ท่านั่งเก็บขามักพบเมื่อน้องรู้สึกสงบและปลอดภัย"
+    });
+  }
+
+  if (has("lying_relaxed") || has("body_flat")) {
+    stateScore.relaxed += 3;
+    stateScore.sleep_mode += 1;
+    reasons.push({
+      ja: "だらけて横になるのはかなりリラックス寄りです。",
+      en: "Lying loosely suggests strong relaxation.",
+      th: "การนอนเหยียดยาวแสดงถึงความผ่อนคลายมาก"
+    });
+  }
+
+  if (has("curled_sleep")) {
+    stateScore.sleep_mode += 3;
+    stateScore.relaxed += 1;
+    reasons.push({
+      ja: "丸まって寝るのは睡眠モードに近いです。",
+      en: "Curled sleeping suggests sleep mode.",
+      th: "การนอนขดตัวบ่งบอกถึงโหมดนอน"
+    });
+  }
+
+  if (has("belly_up") || has("belly_exposed")) {
+    stateScore.relaxed += 3;
+    stateScore.dominant += 1;
+    reasons.push({
+      ja: "お腹を見せるのは安心感が高いサインです。",
+      en: "Showing the belly suggests a high level of comfort.",
+      th: "การโชว์พุงบ่งบอกถึงความรู้สึกปลอดภัยสูง"
+    });
+  }
+
+  if (has("sitting_normal")) {
+    stateScore.curious += 2;
+    reasons.push({
+      ja: "普通座りは様子見や観察中に多いです。",
+      en: "Normal sitting often appears during observation.",
+      th: "การนั่งปกติมักพบเมื่อน้องกำลังสังเกตอยู่"
+    });
+  }
+
+  if (has("upright_alert") || has("body_low")) {
+    stateScore.alert += 2;
+    reasons.push({
+      ja: "上体を起こす・低くする姿勢は警戒と関係しやすいです。",
+      en: "Upright or low body posture often relates to alertness.",
+      th: "ท่าลุกตัวขึ้นหรือลำตัวต่ำมักเกี่ยวข้องกับการระวังตัว"
+    });
+  }
+
+  if (has("high_position")) {
+    stateScore.dominant += 2;
+    stateScore.relaxed += 1;
+    reasons.push({
+      ja: "高い場所では余裕を持って周囲を見ることがあります。",
+      en: "A high position can suggest confidence and calm observation.",
+      th: "การอยู่ในที่สูงอาจสื่อถึงความมั่นใจและการมองรอบตัวอย่างสบายใจ"
+    });
+  }
+
+  let topKey = "curious";
+  let topScore = -1;
+
+  for (const [key, score] of Object.entries(stateScore)) {
+    if (score > topScore) {
+      topKey = key;
+      topScore = score;
+    }
+  }
+
+  return {
+    state: topKey,
+    reasons
+  };
+}
+
+function stateToEmotion(state, selected) {
+  const values = Object.values(selected);
+  const has = (k) => values.includes(k);
+
+  if (state === "sleep_mode") {
+    return "sleepy";
+  }
+
+  if (state === "relaxed") {
+    if (has("slow_blink") || has("kneading")) return "affectionate";
+    return "relaxed";
+  }
+
+  if (state === "tolerating") {
+    return "tolerating";
+  }
+
+  if (state === "alert") {
+    if (has("ears_back_strong") || has("paws_pushing") || has("paw_push")) return "annoyed";
+    return "cautious";
+  }
+
+  if (state === "play_mode") {
+    return "playful";
+  }
+
+  if (state === "dominant") {
+    return "observing";
+  }
+
+  if (state === "curious") {
+    return "observing";
+  }
+
+  return "observing";
+}
+
+function buildMessage(emotion) {
+  const map = {
+    relaxed: {
+      ja: "落ち着いて安心している可能性があります。",
+      en: "Your cat may feel calm and secure.",
+      th: "น้องอาจกำลังรู้สึกสงบและปลอดภัย"
+    },
+    sleepy: {
+      ja: "眠い、または休みたい気分の可能性があります。",
+      en: "Your cat may be sleepy or want to rest.",
+      th: "น้องอาจง่วงหรือต้องการพัก"
+    },
+    observing: {
+      ja: "周囲を見ながら様子をうかがっている可能性があります。",
+      en: "Your cat may be observing the surroundings.",
+      th: "น้องอาจกำลังสังเกตสิ่งรอบตัว"
+    },
+    cautious: {
+      ja: "少し警戒している可能性があります。",
+      en: "Your cat may be a little cautious.",
+      th: "น้องอาจกำลังระวังตัวเล็กน้อย"
+    },
+    annoyed: {
+      ja: "少しイヤだったり、距離を取りたい可能性があります。",
+      en: "Your cat may be slightly annoyed or want some space.",
+      th: "น้องอาจไม่ค่อยชอบและต้องการระยะห่าง"
+    },
+    playful: {
+      ja: "遊びたい、またはちょっかいを出したい気分かもしれません。",
+      en: "Your cat may want to play or interact.",
+      th: "น้องอาจอยากเล่นหรือมีปฏิสัมพันธ์"
+    },
+    affectionate: {
+      ja: "甘えたい、安心して関わりたい気持ちかもしれません。",
+      en: "Your cat may feel affectionate and want connection.",
+      th: "น้องอาจอยากอ้อนและมีความรู้สึกผูกพัน"
+    },
+    tolerating: {
+      ja: "嫌ではないけれど、自分から積極的ではなく我慢して受け入れている可能性があります。",
+      en: "Your cat may be accepting the situation, but not actively enjoying it.",
+      th: "น้องอาจยอมรับสถานการณ์อยู่ แต่ไม่ได้ชอบแบบเต็มใจ"
+    }
+  };
+
+  return map[emotion];
 }
 
 function judgeEmotion(selected) {
   const values = Object.values(selected);
-  const has = (k) => values.includes(k);
 
   if (values.length === 0) {
     return {
-      title: {
+      state: {
+        ja: "未選択",
+        en: "No Selection",
+        th: "ยังไม่ได้เลือก"
+      },
+      emotion: {
         ja: "未選択",
         en: "No Selection",
         th: "ยังไม่ได้เลือก"
@@ -383,315 +647,14 @@ function judgeEmotion(selected) {
     };
   }
 
-  const scores = {
-    relaxed: 0,
-    affectionate: 0,
-    alert: 0,
-    anxious: 0,
-    irritated: 0,
-    focused: 0
-  };
-
-  const reasons = [];
-
-  if (has("slow_blink")) {
-    scores.relaxed += 3;
-    scores.affectionate += 2;
-    reasons.push({
-      ja: "ゆっくり瞬きは安心や信頼のサインです。",
-      en: "A slow blink is a sign of calmness and trust.",
-      th: "การกะพริบตาช้าๆ เป็นสัญญาณของความสบายใจและความไว้ใจ"
-    });
-  }
-
-  if (has("eyes_narrow")) {
-    scores.relaxed += 2;
-    reasons.push({
-      ja: "目を細めるのは落ち着きのサインになりやすいです。",
-      en: "Narrowed eyes often suggest calmness.",
-      th: "การหรี่ตามักเป็นสัญญาณของความผ่อนคลาย"
-    });
-  }
-
-  if (has("eyes_wide")) {
-    scores.alert += 2;
-    scores.focused += 2;
-    reasons.push({
-      ja: "目が大きく開いていると、警戒や集中の可能性があります。",
-      en: "Wide eyes can suggest alertness or focus.",
-      th: "ตาเบิกกว้างอาจหมายถึงการระวังตัวหรือจดจ่อ"
-    });
-  }
-
-  if (has("pupils_large")) {
-    scores.alert += 2;
-    scores.focused += 2;
-    scores.anxious += 1;
-    reasons.push({
-      ja: "瞳孔が大きいと、興奮・集中・緊張の可能性があります。",
-      en: "Large pupils can suggest excitement, focus, or tension.",
-      th: "รูม่านตาขยายอาจหมายถึงความตื่นเต้น การจดจ่อ หรือความตึงเครียด"
-    });
-  }
-
-  if (has("ears_forward")) {
-    scores.focused += 2;
-    scores.alert += 1;
-    reasons.push({
-      ja: "耳が前向きだと、興味や集中の可能性があります。",
-      en: "Forward ears can suggest interest or focus.",
-      th: "หูชี้ไปข้างหน้าอาจหมายถึงความสนใจหรือการจดจ่อ"
-    });
-  }
-
-  if (has("ears_side")) {
-    scores.alert += 2;
-    scores.anxious += 1;
-    reasons.push({
-      ja: "耳が横向きだと、少し警戒している可能性があります。",
-      en: "Sideways ears can suggest caution.",
-      th: "หูหันออกข้างอาจหมายถึงการระวังตัว"
-    });
-  }
-
-  if (has("ears_back")) {
-    scores.anxious += 3;
-    scores.irritated += 2;
-    reasons.push({
-      ja: "耳が後ろ向きだと、不安や不快の可能性があります。",
-      en: "Ears back can suggest anxiety or discomfort.",
-      th: "หูพับไปข้างหลังอาจหมายถึงความกังวลหรือความไม่สบายใจ"
-    });
-  }
-
-  if (has("kneading")) {
-    scores.affectionate += 3;
-    scores.relaxed += 2;
-    reasons.push({
-      ja: "ふみふみは甘えや安心のサインになりやすいです。",
-      en: "Kneading often suggests affection and comfort.",
-      th: "การนวดมักเป็นสัญญาณของความอ้อนและความสบายใจ"
-    });
-  }
-
-  if (has("paw_tense")) {
-    scores.alert += 2;
-    scores.focused += 1;
-    reasons.push({
-      ja: "前足に力が入っていると、緊張しながら集中している可能性があります。",
-      en: "Tense front paws can suggest focus with tension.",
-      th: "ขาหน้าเกร็งอาจหมายถึงกำลังจดจ่อพร้อมความตึงเครียด"
-    });
-  }
-
-  if (has("paw_lift")) {
-    scores.alert += 1;
-    scores.focused += 1;
-    reasons.push({
-      ja: "前足を少し上げるのは、様子見や軽い興味のサインかもしれません。",
-      en: "A slightly lifted paw can suggest curiosity or hesitation.",
-      th: "การยกขาหน้าขึ้นเล็กน้อยอาจหมายถึงความสนใจหรือการลังเล"
-    });
-  }
-
-  if (has("ghost_pose")) {
-    scores.alert += 2;
-    scores.focused += 1;
-    reasons.push({
-      ja: "前足を浮かせる姿勢は、様子見や警戒の可能性があります。",
-      en: "A paws-up pose can suggest alert observation.",
-      th: "ท่ายกขาหน้าอาจหมายถึงการเฝ้าดูหรือระวังตัว"
-    });
-  }
-
-  if (has("face_cover")) {
-    scores.relaxed += 1;
-    scores.anxious += 1;
-    reasons.push({
-      ja: "顔を隠すしぐさは、休みたい時や刺激を避けたい時にも見られます。",
-      en: "Covering the face can appear when the cat wants to rest or avoid stimulation.",
-      th: "การเอามือปิดหน้าอาจพบได้เมื่อต้องการพักหรือหลีกเลี่ยงสิ่งรบกวน"
-    });
-  }
-
-  if (has("paw_cross")) {
-    scores.relaxed += 1;
-    reasons.push({
-      ja: "前足をクロスする姿勢は、落ち着いている印象につながりやすいです。",
-      en: "Crossed paws often give a calm impression.",
-      th: "การไขว้ขาหน้ามักให้ความรู้สึกสงบ"
-    });
-  }
-
-  if (has("paw_touch_face")) {
-    scores.affectionate += 1;
-    scores.focused += 1;
-    reasons.push({
-      ja: "前足で顔に触れる動きは、関わりや注意のサインかもしれません。",
-      en: "Touching the face with a paw can suggest interaction or attention.",
-      th: "การเอาขาแตะหน้าอาจหมายถึงการมีปฏิสัมพันธ์หรือการให้ความสนใจ"
-    });
-  }
-
-  if (has("paw_push")) {
-    scores.irritated += 2;
-    scores.alert += 1;
-    reasons.push({
-      ja: "足で押す動きは、距離を取りたいサインのことがあります。",
-      en: "Pushing with a paw can mean wanting distance.",
-      th: "การใช้ขาผลักอาจหมายถึงต้องการเว้นระยะ"
-    });
-  }
-
-  if (has("claws_out")) {
-    scores.irritated += 3;
-    scores.alert += 1;
-    reasons.push({
-      ja: "爪を立てるのは、興奮や防御の可能性があります。",
-      en: "Claws out can suggest excitement or defense.",
-      th: "การกางเล็บอาจหมายถึงความตื่นเต้นหรือการตั้งรับ"
-    });
-  }
-
-  if (has("hands_up")) {
-    scores.relaxed += 1;
-    scores.focused += 1;
-    reasons.push({
-      ja: "万歳ポーズは、体勢しだいで脱力や遊びの途中にも見られます。",
-      en: "A hands-up pose can appear during relaxation or play depending on posture.",
-      th: "ท่ายกขาขึ้นอาจพบได้ระหว่างการผ่อนคลายหรือการเล่น ขึ้นอยู่กับท่าทาง"
-    });
-  }
-
-  if (has("grab_hold")) {
-    scores.focused += 3;
-    scores.affectionate += 1;
-    reasons.push({
-      ja: "つかんで離さないのは、遊びや狩りモードに入りやすいです。",
-      en: "Grabbing and holding often suggests play or hunting mode.",
-      th: "การจับแล้วไม่ปล่อยมักหมายถึงโหมดเล่นหรือโหมดล่า"
-    });
-  }
-
-  if (has("tail_up")) {
-    scores.affectionate += 2;
-    scores.relaxed += 1;
-    reasons.push({
-      ja: "しっぽを立てるのは、友好的なサインのことがあります。",
-      en: "An upright tail can be a friendly sign.",
-      th: "การตั้งหางอาจเป็นสัญญาณของความเป็นมิตร"
-    });
-  }
-
-  if (has("tail_tip_move")) {
-    scores.focused += 2;
-    scores.alert += 1;
-    reasons.push({
-      ja: "しっぽの先だけ動くのは、興味や集中のサインになりやすいです。",
-      en: "A moving tail tip often suggests interest or focus.",
-      th: "ปลายหางขยับมักเป็นสัญญาณของความสนใจหรือการจดจ่อ"
-    });
-  }
-
-  if (has("tail_fast")) {
-    scores.irritated += 3;
-    scores.alert += 1;
-    reasons.push({
-      ja: "しっぽを激しく振るのは、不快やイライラの可能性があります。",
-      en: "A fast tail swish can suggest irritation.",
-      th: "การสะบัดหางแรงอาจหมายถึงความหงุดหงิด"
-    });
-  }
-
-  if (has("tail_tucked")) {
-    scores.anxious += 3;
-    reasons.push({
-      ja: "しっぽを巻くのは、不安や怖さのサインになりやすいです。",
-      en: "A tucked tail often suggests anxiety or fear.",
-      th: "การหางหุบมักเป็นสัญญาณของความกังวลหรือความกลัว"
-    });
-  }
-
-  if (has("loaf")) {
-    scores.relaxed += 2;
-    reasons.push({
-      ja: "香箱座りは、落ち着いて休んでいる時に見られやすいです。",
-      en: "A loaf position often appears when a cat is calmly resting.",
-      th: "ท่านั่งเก็บขามักพบเมื่อน้องกำลังพักอย่างสงบ"
-    });
-  }
-
-  if (has("body_low")) {
-    scores.anxious += 2;
-    scores.alert += 1;
-    reasons.push({
-      ja: "体を低くするのは、警戒や不安の可能性があります。",
-      en: "A low body posture can suggest caution or anxiety.",
-      th: "การลดลำตัวต่ำอาจหมายถึงการระวังตัวหรือความกังวล"
-    });
-  }
-
-  if (has("belly_up")) {
-    scores.relaxed += 2;
-    scores.affectionate += 1;
-    reasons.push({
-      ja: "お腹を見せるのは、安心している時に見られることがあります。",
-      en: "Showing the belly can appear when a cat feels safe.",
-      th: "การโชว์พุงอาจพบได้เมื่อน้องรู้สึกปลอดภัย"
-    });
-  }
-
-  if (has("stretch")) {
-    scores.relaxed += 2;
-    reasons.push({
-      ja: "伸びは、脱力やリラックスのサインになりやすいです。",
-      en: "Stretching often suggests relaxation.",
-      th: "การยืดตัวมักเป็นสัญญาณของความผ่อนคลาย"
-    });
-  }
-
-  let topKey = "relaxed";
-  let topScore = -1;
-
-  for (const [key, score] of Object.entries(scores)) {
-    if (score > topScore) {
-      topKey = key;
-      topScore = score;
-    }
-  }
-
-  const labels = {
-    relaxed: {
-      title: { ja: "リラックスの可能性", en: "Possible Relaxation", th: "อาจกำลังผ่อนคลาย" },
-      message: { ja: "落ち着いて過ごしている可能性があります。", en: "Your cat may be feeling calm.", th: "น้องอาจกำลังรู้สึกสงบและผ่อนคลาย" }
-    },
-    affectionate: {
-      title: { ja: "甘え・親愛の可能性", en: "Possible Affection", th: "อาจกำลังอ้อนหรือแสดงความรัก" },
-      message: { ja: "あなたや周りに対して親しさを見せている可能性があります。", en: "Your cat may be showing affection.", th: "น้องอาจกำลังแสดงความรักหรือความคุ้นเคย" }
-    },
-    alert: {
-      title: { ja: "警戒の可能性", en: "Possible Alertness", th: "อาจกำลังระวังตัว" },
-      message: { ja: "周囲を気にして少し様子を見ている可能性があります。", en: "Your cat may be watching the surroundings carefully.", th: "น้องอาจกำลังสังเกตสิ่งรอบตัวอย่างระมัดระวัง" }
-    },
-    anxious: {
-      title: { ja: "不安の可能性", en: "Possible Anxiety", th: "อาจกำลังกังวล" },
-      message: { ja: "少し怖さや不安を感じている可能性があります。", en: "Your cat may be feeling anxious or uneasy.", th: "น้องอาจกำลังรู้สึกกังวลหรือไม่สบายใจ" }
-    },
-    irritated: {
-      title: { ja: "不快・イライラの可能性", en: "Possible Irritation", th: "อาจกำลังหงุดหงิด" },
-      message: { ja: "今はあまり構われたくない可能性があります。", en: "Your cat may not want interaction right now.", th: "ตอนนี้น้องอาจไม่อยากให้เข้าไปรบกวน" }
-    },
-    focused: {
-      title: { ja: "興味・集中の可能性", en: "Possible Focus", th: "อาจกำลังสนใจและจดจ่อ" },
-      message: { ja: "何かに意識が向いて集中している可能性があります。", en: "Your cat may be focused on something.", th: "น้องอาจกำลังจดจ่อกับบางสิ่ง" }
-    }
-  };
-
-  const topReasons = reasons.slice(0, 2).map(r => r[currentLang]).join(" ");
+  const detected = detectState(selected);
+  const emotion = stateToEmotion(detected.state, selected);
+  const topReasons = detected.reasons.slice(0, 2).map(r => r[currentLang]).join(" ");
 
   return {
-    title: labels[topKey].title,
-    message: labels[topKey].message,
+    state: stateLabels[detected.state],
+    emotion: emotionLabels[emotion],
+    message: buildMessage(emotion),
     why: {
       ja: topReasons || "選ばれた特徴から総合的に判断しました。",
       en: topReasons || "Judged from the selected features.",
@@ -700,10 +663,72 @@ function judgeEmotion(selected) {
   };
 }
 
-langSelect.addEventListener("change", () => {
-  currentLang = langSelect.value;
-  updateStaticText();
-  renderManualSelectors();
-});
+function renderResult(result, selected) {
+  const list = Object.entries(selected).map(([g, k]) => {
+    const group = featuresData.find(x => x.group === g);
+    if (!group) return "";
+    const opt = group.options.find(o => o.key === k);
+    if (!opt) return "";
+    return `<li><strong>${getGroupLabel(group)}:</strong> ${getOptionText(opt)}</li>`;
+  }).join("");
+
+  resultBox.innerHTML = `
+    <div class="result-card">
+      <p><strong>${text("stateTitle")}:</strong> ${result.state[currentLang]}</p>
+      <h3>${text("emotionTitle")}: ${result.emotion[currentLang]}</h3>
+      <p>${result.message[currentLang]}</p>
+      <p><strong>${text("whyTitle")}</strong></p>
+      <p>${result.why[currentLang]}</p>
+      ${list ? `<p><strong>${text("selectedFeatures")}</strong></p><ul>${list}</ul>` : ""}
+    </div>
+  `;
+}
+
+if (langSelect) {
+  langSelect.addEventListener("change", e => {
+    currentLang = e.target.value;
+    updateStaticText();
+    renderManualSelectors();
+    resultBox.innerHTML = "";
+  });
+}
+
+if (imageInput) {
+  imageInput.addEventListener("change", e => {
+    const file = e.target.files[0];
+
+    if (!file) {
+      fileStatus.textContent = text("fileNone");
+      delete fileStatus.dataset.hasFile;
+      currentImageBase64 = "";
+      currentMimeType = "";
+      if (preview.tagName === "IMG") {
+        preview.src = "";
+        preview.style.display = "none";
+      } else {
+        preview.innerHTML = "";
+      }
+      return;
+    }
+
+    fileStatus.textContent = file.name;
+    fileStatus.dataset.hasFile = "true";
+    currentMimeType = file.type;
+
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const result = ev.target.result;
+      currentImageBase64 = result.split(",")[1];
+
+      if (preview.tagName === "IMG") {
+        preview.src = result;
+        preview.style.display = "block";
+      } else {
+        preview.innerHTML = `<img src="${result}" alt="preview" style="max-width:100%; border-radius:16px;">`;
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
 loadFeatures();
