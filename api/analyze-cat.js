@@ -10,7 +10,12 @@ module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({
       ok: false,
-      error: "Method not allowed"
+      error: {
+        ja: "POSTメソッドのみ使えます。",
+        en: "Only POST method is allowed.",
+        th: "อนุญาตเฉพาะเมธอด POST เท่านั้น"
+      },
+      detail: "Method not allowed"
     });
   }
 
@@ -20,7 +25,12 @@ module.exports = async function handler(req, res) {
     if (!apiKey) {
       return res.status(500).json({
         ok: false,
-        error: "GEMINI_API_KEY is missing on Vercel"
+        error: {
+          ja: "VercelにGEMINI_API_KEYが設定されていません。",
+          en: "GEMINI_API_KEY is not set on Vercel.",
+          th: "ยังไม่ได้ตั้งค่า GEMINI_API_KEY บน Vercel"
+        },
+        detail: "GEMINI_API_KEY is missing on Vercel"
       });
     }
 
@@ -29,19 +39,24 @@ module.exports = async function handler(req, res) {
     if (!imageBase64) {
       return res.status(400).json({
         ok: false,
-        error: "imageBase64 is required"
+        error: {
+          ja: "画像データがありません。",
+          en: "Image data is missing.",
+          th: "ไม่มีข้อมูลรูปภาพ"
+        },
+        detail: "imageBase64 is required"
       });
     }
 
     const prompt = `
 You are analyzing a cat photo for a cat emotion web app.
 
-Look at the cat and return ONLY valid JSON.
+Return ONLY valid JSON.
 No markdown.
 No explanation.
 No code fence.
 
-Use exactly this format:
+Use exactly this JSON format:
 
 {
   "eyes": "eyes_closed OR eyes_half_open OR eyes_soft OR eyes_staring OR unknown",
@@ -52,9 +67,10 @@ Use exactly this format:
 }
 
 Rules:
-- Return only one value for each group.
+- Return exactly one value for each group.
 - If unclear, use "unknown".
-- Do not invent keys outside the allowed list.
+- Use only the allowed keys above.
+- Be conservative. If you are not sure, choose "unknown".
 `.trim();
 
     const apiResponse = await fetch(
@@ -88,10 +104,31 @@ Rules:
 
     const rawText = await apiResponse.text();
 
+    // 429 / quota エラーを先にわかりやすく返す
+    if (
+      rawText.includes('"code": 429') ||
+      rawText.includes("RESOURCE_EXHAUSTED") ||
+      rawText.includes("Quota exceeded")
+    ) {
+      return res.status(429).json({
+        ok: false,
+        error: {
+          ja: "ただいまAI判定が混み合っています。20〜60秒ほど待ってから、もう一度お試しください。",
+          en: "AI analysis is currently busy. Please wait about 20 to 60 seconds and try again.",
+          th: "ขณะนี้ระบบวิเคราะห์ด้วย AI กำลังใช้งานหนาแน่น กรุณารอประมาณ 20 ถึง 60 วินาที แล้วลองใหม่อีกครั้ง"
+        },
+        detail: "Gemini quota exceeded"
+      });
+    }
+
     if (!apiResponse.ok) {
       return res.status(apiResponse.status).json({
         ok: false,
-        error: "Gemini API request failed",
+        error: {
+          ja: "AI判定でエラーが起きました。",
+          en: "AI analysis failed.",
+          th: "เกิดข้อผิดพลาดในการวิเคราะห์ด้วย AI"
+        },
         detail: rawText
       });
     }
@@ -102,7 +139,11 @@ Rules:
     } catch (e) {
       return res.status(500).json({
         ok: false,
-        error: "Failed to parse Gemini response",
+        error: {
+          ja: "Geminiの返り値を読めませんでした。",
+          en: "Failed to parse Gemini response.",
+          th: "ไม่สามารถอ่านผลลัพธ์จาก Gemini ได้"
+        },
         detail: rawText
       });
     }
@@ -113,8 +154,12 @@ Rules:
     if (!modelText) {
       return res.status(500).json({
         ok: false,
-        error: "Gemini returned empty text",
-        detail: geminiData
+        error: {
+          ja: "Geminiの返答が空でした。",
+          en: "Gemini returned an empty response.",
+          th: "Gemini ส่งคำตอบว่างกลับมา"
+        },
+        detail: JSON.stringify(geminiData)
       });
     }
 
@@ -128,7 +173,11 @@ Rules:
     } catch (e) {
       return res.status(500).json({
         ok: false,
-        error: "Gemini text was not valid JSON",
+        error: {
+          ja: "Geminiの返答がJSON形式ではありませんでした。",
+          en: "Gemini response was not valid JSON.",
+          th: "คำตอบจาก Gemini ไม่ได้อยู่ในรูปแบบ JSON ที่ถูกต้อง"
+        },
         detail: cleaned
       });
     }
@@ -151,13 +200,23 @@ Rules:
     ) {
       return res.status(429).json({
         ok: false,
-        error: "Gemini無料枠の上限に達しました。20〜60秒ほど待ってから、もう一度試してください。"
+        error: {
+          ja: "ただいまAI判定が混み合っています。20〜60秒ほど待ってから、もう一度お試しください。",
+          en: "AI analysis is currently busy. Please wait about 20 to 60 seconds and try again.",
+          th: "ขณะนี้ระบบวิเคราะห์ด้วย AI กำลังใช้งานหนาแน่น กรุณารอประมาณ 20 ถึง 60 วินาที แล้วลองใหม่อีกครั้ง"
+        },
+        detail: "Gemini quota exceeded"
       });
     }
 
     return res.status(500).json({
       ok: false,
-      error: msg
+      error: {
+        ja: "サーバーエラーが起きました。",
+        en: "A server error occurred.",
+        th: "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์"
+      },
+      detail: msg
     });
   }
 };
