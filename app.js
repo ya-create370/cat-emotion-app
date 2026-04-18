@@ -724,7 +724,10 @@ function stateToEmotion(state, selected) {
     return "relaxed";
   }
 
-  if (state === "tolerating") return "tolerating";
+    if (state === "tolerating") {
+    if (has("paws_pushing_claws")) return "annoyed";
+    return "tolerating";
+  }
 
    if (state === "alert") {
     if (
