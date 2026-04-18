@@ -159,6 +159,18 @@
         "en": "Pushing with paw",
         "th": "ใช้ขาผลัก"
       },
+{
+  "key": "paws_pushing_soft",
+  "ja": "軽く押す（爪なし）",
+  "en": "Pushing softly (no claws)",
+  "th": "ผลักเบา ๆ (ไม่มีเล็บ)"
+},
+{
+  "key": "paws_pushing_claws",
+  "ja": "押す（爪あり）",
+  "en": "Pushing with claws",
+  "th": "ผลักพร้อมกางเล็บ"
+},
       {
         "key": "claws_out",
         "ja": "爪を立てる",
