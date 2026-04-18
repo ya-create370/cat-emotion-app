@@ -603,6 +603,26 @@ function detectState(selected) {
     });
   }
 
+  if (has("paws_pushing_soft")) {
+    stateScore.alert += 1;
+    stateScore.tolerating += 2;
+    reasons.push({
+      ja: "軽く押すのは、少し距離を取りたいサインです。",
+      en: "Soft pushing suggests the cat wants a little space.",
+      th: "การผลักเบา ๆ เป็นสัญญาณว่าแมวอยากมีระยะห่างเล็กน้อย"
+    });
+  }
+
+  if (has("paws_pushing_claws")) {
+    stateScore.alert += 2;
+    stateScore.tolerating += 2;
+    reasons.push({
+      ja: "爪を出して押すのは、不快さが強めのサインです。",
+      en: "Pushing with claws suggests a stronger level of discomfort.",
+      th: "การผลักพร้อมกางเล็บบ่งบอกถึงความไม่สบายใจที่แรงขึ้น"
+    });
+  }
+
   if (has("paws_pushing") || has("paw_push") || has("claws_out")) {
     stateScore.alert += 2;
     stateScore.tolerating += 1;
