@@ -400,7 +400,13 @@ async function analyzePhotoWithAI() {
     }
 
     if (!response.ok || !data.ok) {
-      throw new Error(data.detail || data.error || "APIエラーが起きました");
+      throw new Error(
+  data.detail ||
+  data.error?.[currentLang] ||
+  data.error?.ja ||
+  data.error ||
+  "APIエラーが起きました"
+);
     }
 
     applyAIResultToSelectors(data);
