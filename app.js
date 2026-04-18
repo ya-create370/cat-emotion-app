@@ -390,7 +390,19 @@ async function analyzePhotoWithAI() {
       })
     });
 
-    const data = await response.json();
+    const rawText = await response.text();
+
+    let data;
+    try {
+      data = JSON.parse(rawText);
+    } catch (jsonError) {
+      throw new Error("APIがJSONを返していません: " + rawText);
+    }
+
+    if (!response.ok || !data.ok) {
+      throw new Error(data.detail || data.error || "APIエラーが起きました");
+    }
+
     applyAIResultToSelectors(data);
 
     resultBox.innerHTML = `
@@ -412,9 +424,21 @@ async function analyzePhotoWithAI() {
 function applyAIResultToSelectors(data) {
   const selects = manualArea.querySelectorAll("select");
 
+  // APIの返り値の中から features を取り出す
+  const features = data?.result?.features || {};
+
+  // AIが配列で返しても、文字で返しても対応する
+  const normalized = {
+    eyes: Array.isArray(features.eyes) ? features.eyes[0] : features.eyes,
+    ears: Array.isArray(features.ears) ? features.ears[0] : features.ears,
+    paws: Array.isArray(features.paws) ? features.paws[0] : features.paws,
+    tail: Array.isArray(features.tail) ? features.tail[0] : features.tail,
+    body: Array.isArray(features.body) ? features.body[0] : features.body
+  };
+
   selects.forEach(select => {
     const group = select.dataset.group;
-    const value = data[group];
+    const value = normalized[group];
 
     if (value && value !== "unknown") {
       select.value = value;
