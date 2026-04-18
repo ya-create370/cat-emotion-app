@@ -144,10 +144,14 @@ Rules:
   } catch (error) {
     const msg = error.message || "Internal server error";
 
-    if (msg.includes("429") || msg.includes("RESOURCE_EXHAUSTED")) {
+    if (
+      msg.includes("429") ||
+      msg.includes("RESOURCE_EXHAUSTED") ||
+      msg.includes("Quota exceeded")
+    ) {
       return res.status(429).json({
         ok: false,
-        error: "Gemini無料枠の上限に達しました。少し待ってから再度試してください。"
+        error: "Gemini無料枠の上限に達しました。20〜60秒ほど待ってから、もう一度試してください。"
       });
     }
 
