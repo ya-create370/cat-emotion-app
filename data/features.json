@@ -28,6 +28,30 @@
         "ja": "瞳孔が大きい",
         "en": "Large pupils",
         "th": "รูม่านตาขยาย"
+      },
+      {
+        "key": "eyes_closed",
+        "ja": "目を閉じる",
+        "en": "Eyes closed",
+        "th": "หลับตา"
+      },
+      {
+        "key": "eyes_half_open",
+        "ja": "半目",
+        "en": "Half-open eyes",
+        "th": "ตาปรือ"
+      },
+      {
+        "key": "eyes_soft",
+        "ja": "やわらかい目",
+        "en": "Soft eyes",
+        "th": "สายตานุ่มนวล"
+      },
+      {
+        "key": "eyes_staring",
+        "ja": "じっと見る",
+        "en": "Staring",
+        "th": "จ้อง"
       }
     ]
   },
@@ -54,6 +78,30 @@
         "ja": "耳が後ろ向き",
         "en": "Ears back",
         "th": "หูพับไปข้างหลัง"
+      },
+      {
+        "key": "ears_neutral",
+        "ja": "耳が普通",
+        "en": "Neutral ears",
+        "th": "หูปกติ"
+      },
+      {
+        "key": "ears_back_soft",
+        "ja": "耳が少し後ろ",
+        "en": "Slightly back ears",
+        "th": "หูเอนไปด้านหลังเล็กน้อย"
+      },
+      {
+        "key": "ears_back_strong",
+        "ja": "耳が強く後ろ",
+        "en": "Strongly pinned back ears",
+        "th": "หูพับไปด้านหลังชัดเจน"
+      },
+      {
+        "key": "ears_flat_side",
+        "ja": "耳が横に寝る",
+        "en": "Flattened sideways ears",
+        "th": "หูแบนออกข้าง"
       }
     ]
   },
@@ -84,7 +132,7 @@
       {
         "key": "ghost_pose",
         "ja": "前足を浮かせる（幽霊ポーズ）",
-        "en": "Ghost pose (paws up)",
+        "en": "Ghost pose",
         "th": "ยกขาหน้าเหมือนผี"
       },
       {
@@ -121,13 +169,49 @@
         "key": "hands_up",
         "ja": "万歳ポーズ",
         "en": "Hands up pose",
-        "th": "ยกขาขึ้นเหมือนยอมแพ้"
+        "th": "ยกขาขึ้น"
       },
       {
         "key": "grab_hold",
         "ja": "つかんで離さない",
         "en": "Grabbing and holding",
         "th": "จับแล้วไม่ปล่อย"
+      },
+      {
+        "key": "paws_hanging",
+        "ja": "前足だらん",
+        "en": "Paws hanging",
+        "th": "ขาหน้าห้อย"
+      },
+      {
+        "key": "paws_crossed",
+        "ja": "前足をきれいにそろえる",
+        "en": "Paws neatly crossed",
+        "th": "วางขาหน้าไขว้อย่างเรียบร้อย"
+      },
+      {
+        "key": "paws_pushing",
+        "ja": "前足で押し返す",
+        "en": "Pushing away",
+        "th": "ดันกลับด้วยขาหน้า"
+      },
+      {
+        "key": "paws_holding",
+        "ja": "前足でつかむ",
+        "en": "Holding with paws",
+        "th": "จับด้วยขาหน้า"
+      },
+      {
+        "key": "paws_guarding",
+        "ja": "前足を前にそろえる",
+        "en": "Paws placed forward",
+        "th": "วางขาหน้าไว้ด้านหน้า"
+      },
+      {
+        "key": "paws_curled",
+        "ja": "前足を丸める",
+        "en": "Curled paws",
+        "th": "งอขาหน้า"
       }
     ]
   },
@@ -160,6 +244,24 @@
         "ja": "しっぽを巻く",
         "en": "Tail tucked",
         "th": "หางหุบ"
+      },
+      {
+        "key": "tail_visible_relaxed",
+        "ja": "しっぽが見えていて力が抜ける",
+        "en": "Visible relaxed tail",
+        "th": "หางที่เห็นและผ่อนคลาย"
+      },
+      {
+        "key": "tail_hidden",
+        "ja": "しっぽが見えない",
+        "en": "Tail not visible",
+        "th": "มองไม่เห็นหาง"
+      },
+      {
+        "key": "tail_curved_soft",
+        "ja": "しっぽがゆるく曲がる",
+        "en": "Softly curved tail",
+        "th": "หางโค้งอย่างนุ่มนวล"
       }
     ]
   },
@@ -192,6 +294,54 @@
         "ja": "伸びをする",
         "en": "Stretching",
         "th": "ยืดตัว"
+      },
+      {
+        "key": "sitting_normal",
+        "ja": "普通に座る",
+        "en": "Sitting normally",
+        "th": "นั่งปกติ"
+      },
+      {
+        "key": "lying_relaxed",
+        "ja": "だらけて横になる",
+        "en": "Lying relaxed",
+        "th": "นอนแบบผ่อนคลาย"
+      },
+      {
+        "key": "held_in_arms",
+        "ja": "抱っこ中",
+        "en": "Held in arms",
+        "th": "กำลังถูกอุ้ม"
+      },
+      {
+        "key": "belly_exposed",
+        "ja": "お腹がしっかり見える",
+        "en": "Belly exposed",
+        "th": "โชว์พุงชัดเจน"
+      },
+      {
+        "key": "upright_alert",
+        "ja": "上体を起こしている",
+        "en": "Upright alert posture",
+        "th": "ลุกตัวขึ้น"
+      },
+      {
+        "key": "curled_sleep",
+        "ja": "丸まって寝る",
+        "en": "Curled sleeping",
+        "th": "นอนขดตัว"
+      },
+      {
+        "key": "body_flat",
+        "ja": "体をぺたっと預ける",
+        "en": "Body laid flat",
+        "th": "ลำตัวแนบพื้น"
+      },
+      {
+        "key": "high_position",
+        "ja": "高い場所にいる",
+        "en": "In a high position",
+        "th": "อยู่ในที่สูง"
       }
     ]
   }
