@@ -726,8 +726,14 @@ function stateToEmotion(state, selected) {
 
   if (state === "tolerating") return "tolerating";
 
-  if (state === "alert") {
-    if (has("ears_back_strong") || has("paws_pushing") || has("paw_push")) return "annoyed";
+   if (state === "alert") {
+    if (
+      has("ears_back_strong") ||
+      has("paws_pushing") ||
+      has("paw_push") ||
+      has("paws_pushing_claws")
+    ) return "annoyed";
+
     return "cautious";
   }
 
