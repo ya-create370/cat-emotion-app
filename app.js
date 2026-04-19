@@ -1000,100 +1000,228 @@ function buildVibe(selected, state, emotion) {
   let en = [];
   let th = [];
 
-  if (has("eyes_half_open")) {
-    ja.push("ちょっと眠そう");
-    en.push("a little sleepy");
-    th.push("ดูง่วงนิดๆ");
+  // 目
+  if (has("eyes_closed")) {
+    ja.push("かなり安心している");
+    en.push("looks very safe and relaxed");
+    th.push("ดูสบายใจและปลอดภัยมาก");
   }
 
-  if (has("eyes_soft") || has("slow_blink") || has("eyes_narrow")) {
+  if (has("eyes_half_open")) {
+    ja.push("少し眠そう");
+    en.push("a little sleepy");
+    th.push("ดูง่วงนิด ๆ");
+  }
+
+  if (has("eyes_soft")) {
     ja.push("表情がやわらかい");
-    en.push("a soft expression");
+    en.push("has a soft expression");
     th.push("สีหน้าดูนุ่มนวล");
   }
 
+  if (has("eyes_staring")) {
+    ja.push("何かに強く注目している");
+    en.push("is strongly focused on something");
+    th.push("กำลังจดจ่อกับบางอย่างมาก");
+  }
+
+  if (has("eyes_tense")) {
+    ja.push("目にかなり力が入っている");
+    en.push("the eyes look very tense");
+    th.push("ดวงตาดูเกร็งมาก");
+  }
+
+  if (has("eyes_wide_alert")) {
+    ja.push("かなり警戒している");
+    en.push("looks highly alert");
+    th.push("ดูระวังตัวมาก");
+  }
+
+  // 耳
+  if (has("ears_neutral")) {
+    ja.push("耳は自然で周囲を見ている");
+    en.push("the ears look neutral and attentive");
+    th.push("หูดูเป็นธรรมชาติและกำลังรับรู้รอบตัว");
+  }
+
+  if (has("ears_back_soft")) {
+    ja.push("少し警戒気味");
+    en.push("slightly cautious");
+    th.push("ดูระวังตัวเล็กน้อย");
+  }
+
+  if (has("ears_back_strong")) {
+    ja.push("かなり不快そう");
+    en.push("looks quite uncomfortable");
+    th.push("ดูไม่ค่อยสบายใจมาก");
+  }
+
+  // 前足
+  if (has("paws_hanging")) {
+    ja.push("少し脱力している");
+    en.push("a little loose and limp");
+    th.push("ดูปล่อยตัวเล็กน้อย");
+  }
+
+  if (has("paws_crossed")) {
+    ja.push("ちょっと余裕がある");
+    en.push("looks composed");
+    th.push("ดูนิ่งและมีความมั่นใจ");
+  }
+
+  if (has("paws_holding")) {
+    ja.push("何かに夢中");
+    en.push("is really engaged");
+    th.push("กำลังสนใจบางอย่างมาก");
+  }
+
+  if (has("paws_pushing")) {
+    ja.push("少し距離を取りたそう");
+    en.push("seems to want a little space");
+    th.push("ดูเหมือนอยากมีระยะห่าง");
+  }
+
+  if (has("paws_pushing_soft")) {
+    ja.push("やんわり距離を取りたそう");
+    en.push("gently wants some space");
+    th.push("ดูเหมือนอยากมีระยะห่างแบบเบา ๆ");
+  }
+
+  if (has("paws_pushing_claws")) {
+    ja.push("かなりイヤそう");
+    en.push("looks fairly uncomfortable");
+    th.push("ดูไม่ค่อยสบายใจค่อนข้างมาก");
+  }
+
+  if (has("paws_grabbing")) {
+    ja.push("ぎゅっとくっつきたい感じ");
+    en.push("seems to want to hold on closely");
+    th.push("ดูเหมือนอยากกอดติดไว้แน่น");
+  }
+
+  // しっぽ
+  if (has("tail_relaxed")) {
+    ja.push("しっぽも落ち着いている");
+    en.push("the tail looks relaxed");
+    th.push("หางดูผ่อนคลาย");
+  }
+
+  if (has("tail_tucked")) {
+    ja.push("少し不安そう");
+    en.push("seems a little uneasy");
+    th.push("ดูไม่ค่อยมั่นใจเล็กน้อย");
+  }
+
+  if (has("tail_puffed")) {
+    ja.push("かなり興奮している");
+    en.push("looks highly aroused");
+    th.push("ดูตื่นตัวหรือ激มาก");
+  }
+
+  // 体
+  if (has("sitting_normal")) {
+    ja.push("静かに様子を見ている");
+    en.push("is quietly observing");
+    th.push("กำลังนั่งดูสถานการณ์อย่างเงียบ ๆ");
+  }
+
+  if (has("lying_relaxed")) {
+    ja.push("全身がかなりリラックスしている");
+    en.push("the whole body looks deeply relaxed");
+    th.push("ทั้งตัวดูผ่อนคลายมาก");
+  }
+
   if (has("held_in_arms")) {
-    ja.push("抱っこされながら受け入れている感じ");
+    ja.push("抱っこを受け入れている感じ");
     en.push("seems to be accepting being held");
     th.push("ดูเหมือนกำลังยอมให้อุ้ม");
   }
 
-  if (has("paws_hanging")) {
-    ja.push("少し脱力している");
-    en.push("a little limp and loose");
-    th.push("ดูปล่อยตัวเล็กน้อย");
-  }
-
-  if (has("paw_cross") || has("paws_crossed")) {
-    ja.push("ちょっと上品で余裕がある");
-    en.push("a little elegant and composed");
-    th.push("ดูนิ่งและมีความสบายใจ");
-  }
-
-  if (has("paws_holding") || has("grab_hold")) {
-    ja.push("何かに夢中");
-    en.push("really into something");
-    th.push("กำลังสนใจบางอย่างมาก");
-  }
-
-if (has("paws_pushing_soft")) {
-  ja.push("少し距離を取りたそう");
-  en.push("seems to want a little space");
-  th.push("ดูเหมือนอยากมีระยะห่าง");
-}
-
-if (has("paws_pushing_claws")) {
-  ja.push("かなりイヤそう");
-  en.push("looks fairly uncomfortable");
-  th.push("ดูไม่ค่อยสบายใจค่อนข้างมาก");
-}
-
-if (has("paws_pushing") || has("paw_push")) {
-  ja.push("少し距離を取りたそう");
-  en.push("seems to want a little space");
-  th.push("ดูเหมือนอยากมีระยะห่าง");
-}
-
-  if (has("belly_up") || has("belly_exposed")) {
-    ja.push("かなり無防備");
-    en.push("very open and unguarded");
-    th.push("ดูเปิดเผยและไม่ระวังตัวมาก");
-  }
-
-  if (has("lying_relaxed") || has("body_flat")) {
-    ja.push("かなりだらけている");
-    en.push("very loose and relaxed");
-    th.push("ดูสบายมากและปล่อยตัว");
-  }
-
   if (has("high_position")) {
-    ja.push("ちょっと余裕あり");
-    en.push("a bit confident");
+    ja.push("少し余裕がある");
+    en.push("looks a bit confident");
     th.push("ดูมั่นใจเล็กน้อย");
   }
 
-  if (emotion === "tolerating") {
-    ja.push("嫌ではないけど自分からではなさそう");
-    en.push("not unhappy, but not fully into it");
-    th.push("ไม่ได้ไม่ชอบ แต่ก็ไม่ได้เต็มใจนัก");
+  if (has("body_tense_ready")) {
+    ja.push("全身がかなり緊張している");
+    en.push("the whole body looks very tense");
+    th.push("ทั้งตัวดูเกร็งมาก");
+  }
+
+  if (has("body_arched")) {
+    ja.push("かなり威嚇している");
+    en.push("looks strongly intimidating");
+    th.push("ดูเหมือนกำลังขู่ค่อนข้างแรง");
+  }
+
+  if (has("body_play_butt_up")) {
+    ja.push("遊びに誘っている");
+    en.push("is inviting play");
+    th.push("กำลังชวนเล่น");
+  }
+
+  // 口元
+  if (has("mouth_relaxed")) {
+    ja.push("口元がやわらかい");
+    en.push("the mouth looks relaxed");
+    th.push("ปากดูผ่อนคลาย");
+  }
+
+  if (has("mouth_tight")) {
+    ja.push("口元がムッとしている");
+    en.push("the mouth looks tight");
+    th.push("ปากดูตึงและไม่พอใจ");
+  }
+
+  // ヒゲ
+  if (has("whiskers_relaxed")) {
+    ja.push("ヒゲも自然でやわらかい");
+    en.push("the whiskers look relaxed");
+    th.push("หนวดดูเป็นธรรมชาติและผ่อนคลาย");
+  }
+
+  if (has("whiskers_forward")) {
+    ja.push("ヒゲが前に張っている");
+    en.push("the whiskers are forward");
+    th.push("หนวดชี้มาด้านหน้า");
+  }
+
+  // 感情ごとの補足
+  if (emotion === "affectionate") {
+    ja.push("甘えたい気持ちが強そう");
+    en.push("seems to want affection");
+    th.push("ดูเหมือนอยากอ้อน");
+  }
+
+  if (emotion === "annoyed") {
+    ja.push("かなり不快そう");
+    en.push("seems fairly upset");
+    th.push("ดูไม่ค่อยพอใจมาก");
   }
 
   if (emotion === "playful") {
-    ja.push("遊びスイッチが入りそう");
+    ja.push("遊びスイッチが入っている");
     en.push("looks ready to play");
     th.push("ดูเหมือนพร้อมจะเล่น");
   }
 
   if (emotion === "sleepy") {
     ja.push("今は休みたい感じ");
-    en.push("seems to want to rest");
+    en.push("seems to want to rest now");
     th.push("ดูเหมือนอยากพักตอนนี้");
   }
 
   if (emotion === "observing") {
     ja.push("静かに観察している感じ");
-    en.push("quietly observing");
-    th.push("กำลังเงียบๆ แล้วสังเกตอยู่");
+    en.push("is quietly observing");
+    th.push("กำลังสังเกตอย่างเงียบ ๆ");
+  }
+
+  if (emotion === "tolerating") {
+    ja.push("受け入れているけど少し我慢していそう");
+    en.push("seems to be accepting it, but with some restraint");
+    th.push("ดูเหมือนยอมรับอยู่ แต่ก็อดทนเล็กน้อย");
   }
 
   return {
@@ -1107,54 +1235,87 @@ function buildCatLine(selected, state, emotion) {
   const values = Object.values(selected);
   const has = (k) => values.includes(k);
 
+  // 強い甘え
+  if (emotion === "affectionate" && has("paws_grabbing")) {
+    return {
+      ja: "もうちょっとくっついていたいニャ",
+      en: "I want to stay close a little longer, meow.",
+      th: "อยากอยู่ใกล้อีกหน่อยนะ เมี้ยว"
+    };
+  }
+
+  // 完全リラックス
+  if (
+    emotion === "relaxed" &&
+    (has("eyes_closed") || has("lying_relaxed")) &&
+    has("whiskers_relaxed")
+  ) {
+    return {
+      ja: "いまはとっても安心してるニャ…",
+      en: "I feel very safe right now... meow.",
+      th: "ตอนนี้ฉันรู้สึกสบายใจมากเลย... เมี้ยว"
+    };
+  }
+
+  // 眠い
   if (emotion === "sleepy") {
     return {
       ja: "いまはそっとしてほしいニャ…",
-      en: "Let me nap a little... meow.",
+      en: "Let me rest a little... meow.",
       th: "ตอนนี้ขอพักก่อนนะ... เมี้ยว"
     };
   }
 
-  if (emotion === "relaxed") {
+  // 強い嫌がり
+  if (
+    emotion === "annoyed" &&
+    has("eyes_tense") &&
+    has("mouth_tight")
+  ) {
     return {
-      ja: "ここ、けっこう落ち着くニャ",
-      en: "This feels pretty nice, meow.",
-      th: "ตรงนี้สบายดีนะ... เมี้ยว"
+      ja: "今はかなりイヤだニャ。これ以上はやめてほしいニャ",
+      en: "I really don’t like this right now. Please stop, meow.",
+      th: "ตอนนี้ไม่ชอบมากเลยนะ หยุดได้แล้ว เมี้ยว"
     };
   }
 
-  if (emotion === "affectionate") {
+  // 威嚇
+  if (has("body_arched")) {
     return {
-      ja: "ちょっと甘えてもいいかニャ？",
-      en: "Can I be a little sweet right now, meow?",
-      th: "ขออ้อนหน่อยได้ไหม... เมี้ยว"
+      ja: "これ以上近づくなら本気になるニャ",
+      en: "If you come any closer, I may get serious, meow.",
+      th: "ถ้าเข้ามาใกล้อีก ฉันอาจเอาจริงนะ เมี้ยว"
     };
   }
 
-  if (emotion === "tolerating") {
-    return {
-      ja: "まあ…イヤじゃないけど長くはナシだニャ",
-      en: "Well... I can allow this, but not for too long, meow.",
-      th: "ก็...พอได้อยู่ แต่ไม่นานนะ เมี้ยว"
-    };
-  }
-
-  if (emotion === "cautious") {
-    return {
-      ja: "ちょっと様子を見るニャ",
-      en: "I’m keeping an eye on this, meow.",
-      th: "ขอดูสถานการณ์ก่อนนะ เมี้ยว"
-    };
-  }
-
+  // 軽い不快
   if (emotion === "annoyed") {
     return {
       ja: "今はちょっと放っておいてほしいニャ",
       en: "Please give me a little space right now, meow.",
-      th: "ตอนนี้ขออยู่เงียบๆ หน่อยนะ เมี้ยว"
+      th: "ตอนนี้ขออยู่เงียบ ๆ หน่อยนะ เมี้ยว"
     };
   }
 
+  // プレイ誘い
+  if (has("body_play_butt_up")) {
+    return {
+      ja: "ほら、遊ぶなら今だニャ！",
+      en: "Come on, now is the perfect time to play, meow!",
+      th: "มาเล่นกันตอนนี้เลย เมี้ยว!"
+    };
+  }
+
+  // 遊び直前
+  if (emotion === "playful" && has("body_tense_ready")) {
+    return {
+      ja: "もうすぐ飛び出すニャ…！",
+      en: "I’m about to pounce... meow!",
+      th: "ฉันกำลังจะพุ่งแล้วนะ... เมี้ยว!"
+    };
+  }
+
+  // 通常プレイ
   if (emotion === "playful") {
     return {
       ja: "それ、ちょっと触ってみたいニャ！",
@@ -1163,19 +1324,39 @@ function buildCatLine(selected, state, emotion) {
     };
   }
 
+  // 我慢中
+  if (emotion === "tolerating") {
+    return {
+      ja: "まあ…イヤじゃないけど長くはナシだニャ",
+      en: "Well... I can allow this, but not for too long, meow.",
+      th: "ก็...พอได้อยู่ แต่ไม่นานนะ เมี้ยว"
+    };
+  }
+
+  // 観察中
   if (emotion === "observing") {
     return {
       ja: "ふむ…ちょっと見てるだけだニャ",
       en: "Hmm... I’m just watching for now, meow.",
-      th: "อืม... ตอนนี้ขอดูเฉยๆ ก่อนนะ เมี้ยว"
+      th: "อืม... ตอนนี้ขอดูเฉย ๆ ก่อนนะ เมี้ยว"
     };
   }
 
-  if (has("held_in_arms") && has("eyes_half_open")) {
+  // 警戒
+  if (emotion === "cautious") {
     return {
-      ja: "抱っこはOKだけど、今日は省エネだニャ",
-      en: "Being held is okay, but I’m in low-power mode today, meow.",
-      th: "อุ้มได้อยู่ แต่วันนี้ขอประหยัดพลังงานนะ เมี้ยว"
+      ja: "ちょっと様子を見るニャ",
+      en: "I’m keeping an eye on this, meow.",
+      th: "ขอดูสถานการณ์ก่อนนะ เมี้ยว"
+    };
+  }
+
+  // 通常リラックス
+  if (emotion === "relaxed") {
+    return {
+      ja: "ここ、けっこう落ち着くニャ",
+      en: "This feels pretty nice, meow.",
+      th: "ตรงนี้สบายดีนะ... เมี้ยว"
     };
   }
 
