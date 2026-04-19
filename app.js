@@ -373,10 +373,11 @@ async function loadFeatures() {
 function renderManualSelectors() {
   manualArea.innerHTML = "";
 
-  const aiButton = document.createElement("button");
-  aiButton.textContent = text("aiAnalyze");
-  aiButton.onclick = analyzePhotoWithAI;
-  manualArea.appendChild(aiButton);
+const aiButton = document.createElement("button");
+aiButton.id = "aiAnalyzeButton";
+aiButton.textContent = text("aiAnalyze");
+aiButton.onclick = analyzePhotoWithAI;
+manualArea.appendChild(aiButton);
 
   featuresData.forEach(group => {
     const wrap = document.createElement("div");
@@ -417,6 +418,9 @@ async function analyzePhotoWithAI() {
     return;
   }
 
+  const aiButton = document.getElementById("aiAnalyzeButton");
+  if (aiButton) aiButton.disabled = true;
+
   resultBox.innerHTML = `
     <div class="result-card">
       <h3>${text("aiLoading")}</h3>
@@ -446,12 +450,12 @@ async function analyzePhotoWithAI() {
 
     if (!response.ok || !data.ok) {
       throw new Error(
-  data.detail ||
-  data.error?.[currentLang] ||
-  data.error?.ja ||
-  data.error ||
-  "APIエラーが起きました"
-);
+        data.detail ||
+        data.error?.[currentLang] ||
+        data.error?.ja ||
+        data.error ||
+        "APIエラーが起きました"
+      );
     }
 
     applyAIResultToSelectors(data);
@@ -469,7 +473,29 @@ async function analyzePhotoWithAI() {
         <p>${error.message}</p>
       </div>
     `;
+  } finally {
+    if (aiButton) aiButton.disabled = false;
   }
+}
+    function applyAIResultToSelectors(data) {
+  const selects = manualArea.querySelectorAll("select");
+
+  const normalized = {
+    eyes: data?.eyes || "unknown",
+    ears: data?.ears || "unknown",
+    paws: data?.paws || "unknown",
+    tail: data?.tail || "unknown",
+    body: data?.body || "unknown"
+  };
+
+  selects.forEach(select => {
+    const group = select.dataset.group;
+    const value = normalized[group];
+
+    if (value && value !== "unknown") {
+      select.value = value;
+    }
+  });
 }
 
 function applyAIResultToSelectors(data) {
@@ -883,11 +909,23 @@ function buildVibe(selected, state, emotion) {
     th.push("กำลังสนใจบางอย่างมาก");
   }
 
-  if (has("paws_pushing") || has("paw_push")) {
-    ja.push("少し距離を取りたそう");
-    en.push("seems to want a little space");
-    th.push("ดูเหมือนอยากมีระยะห่าง");
-  }
+if (has("paws_pushing_soft")) {
+  ja.push("少し距離を取りたそう");
+  en.push("seems to want a little space");
+  th.push("ดูเหมือนอยากมีระยะห่าง");
+}
+
+if (has("paws_pushing_claws")) {
+  ja.push("かなりイヤそう");
+  en.push("looks fairly uncomfortable");
+  th.push("ดูไม่ค่อยสบายใจค่อนข้างมาก");
+}
+
+if (has("paws_pushing") || has("paw_push")) {
+  ja.push("少し距離を取りたそう");
+  en.push("seems to want a little space");
+  th.push("ดูเหมือนอยากมีระยะห่าง");
+}
 
   if (has("belly_up") || has("belly_exposed")) {
     ja.push("かなり無防備");
