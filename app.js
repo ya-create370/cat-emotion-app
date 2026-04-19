@@ -318,6 +318,51 @@ function updateStaticText() {
   document.title = text("appTitle").replace("🐱 ", "");
 }
 
+// 画像を軽量化する関数（追加）
+async function resizeImage(file) {
+  return new Promise(resolve => {
+    const img = new Image();
+    const reader = new FileReader();
+
+    reader.onload = e => {
+      img.src = e.target.result;
+    };
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+
+      const MAX_SIZE = 1200;
+
+      let width = img.width;
+      let height = img.height;
+
+      if (width > height) {
+        if (width > MAX_SIZE) {
+          height *= MAX_SIZE / width;
+          width = MAX_SIZE;
+        }
+      } else {
+        if (height > MAX_SIZE) {
+          width *= MAX_SIZE / height;
+          height = MAX_SIZE;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, width, height);
+
+      const compressed = canvas.toDataURL("image/jpeg", 0.75);
+
+      resolve(compressed);
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
 async function loadFeatures() {
   const res = await fetch("./data/features.json");
   featuresData = await res.json();
@@ -1084,8 +1129,9 @@ if (langSelect) {
   });
 }
 
+
 if (imageInput) {
-  imageInput.addEventListener("change", e => {
+  imageInput.addEventListener("change", async e => {
     const file = e.target.files[0];
 
     if (!file) {
@@ -1109,21 +1155,20 @@ if (imageInput) {
       fileStatus.textContent = file.name;
       fileStatus.dataset.hasFile = "true";
     }
-    currentMimeType = file.type;
 
-    const reader = new FileReader();
-    reader.onload = ev => {
-      const result = ev.target.result;
-      currentImageBase64 = result.split(",")[1];
+    currentMimeType = "image/jpeg";
 
-      if (preview && preview.tagName === "IMG") {
-        preview.src = result;
-        preview.style.display = "block";
-      } else if (preview) {
-        preview.innerHTML = `<img src="${result}" alt="preview" style="max-width:100%; border-radius:16px;">`;
-      }
-    };
-    reader.readAsDataURL(file);
+    // 🔥 ここが重要（軽量化）
+    const resized = await resizeImage(file);
+
+    currentImageBase64 = resized.split(",")[1];
+
+    if (preview && preview.tagName === "IMG") {
+      preview.src = resized;
+      preview.style.display = "block";
+    } else if (preview) {
+      preview.innerHTML = `<img src="${resized}" style="max-width:100%; border-radius:16px;">`;
+    }
   });
 }
 
