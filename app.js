@@ -558,12 +558,14 @@ function detectState(selected) {
 
   const reasons = [];
 
+  // 目
   if (has("eyes_closed")) {
     stateScore.sleep_mode += 4;
+    stateScore.relaxed += 2;
     reasons.push({
-      ja: "目を閉じていて眠気が強そうです。",
-      en: "Closed eyes suggest strong sleepiness.",
-      th: "หลับตา บ่งบอกถึงความง่วงอย่างชัดเจน"
+      ja: "目を閉じていて、かなり安心して休んでいそうです。",
+      en: "Closed eyes suggest the cat feels very safe and restful.",
+      th: "การหลับตาบ่งบอกว่าแมวรู้สึกปลอดภัยและกำลังพักผ่อน"
     });
   }
 
@@ -577,22 +579,62 @@ function detectState(selected) {
     });
   }
 
-  if (has("eyes_soft") || has("slow_blink") || has("eyes_narrow")) {
-    stateScore.relaxed += 2;
+  if (has("eyes_soft")) {
+    stateScore.relaxed += 3;
     reasons.push({
       ja: "やわらかい目つきは落ち着きのサインです。",
-      en: "Soft or narrowed eyes suggest calmness.",
-      th: "สายตานุ่มนวลหรือตาหรี่เป็นสัญญาณของความสงบ"
+      en: "Soft eyes suggest calmness.",
+      th: "ดวงตานุ่มนวลเป็นสัญญาณของความสงบ"
     });
   }
 
-  if (has("eyes_wide") || has("pupils_large") || has("eyes_staring")) {
+  if (has("eyes_staring")) {
     stateScore.curious += 2;
     stateScore.alert += 1;
     reasons.push({
-      ja: "目が大きい・じっと見るのは興味や注意のサインです。",
-      en: "Wide or staring eyes suggest curiosity or attention.",
-      th: "ตาเบิกกว้างหรือจ้อง บ่งบอกถึงความสนใจหรือการระวัง"
+      ja: "じっと見るのは、興味や注意のサインです。",
+      en: "Staring suggests curiosity or attention.",
+      th: "การจ้องมองเป็นสัญญาณของความสนใจหรือการระวัง"
+    });
+  }
+
+  if (has("eyes_tense")) {
+    stateScore.alert += 3;
+    stateScore.tolerating += 1;
+    reasons.push({
+      ja: "目に力が入っているのは、かなり緊張しているサインです。",
+      en: "Tense eyes suggest strong tension.",
+      th: "ดวงตาที่เกร็งเป็นสัญญาณของความตึงเครียดสูง"
+    });
+  }
+
+  if (has("eyes_wide_alert")) {
+    stateScore.alert += 4;
+    stateScore.curious += 1;
+    reasons.push({
+      ja: "目を大きく見開くのは、強い警戒や興奮のサインです。",
+      en: "Wide alert eyes suggest strong vigilance or arousal.",
+      th: "ตาเบิกกว้างเป็นสัญญาณของความระวังหรือความตื่นตัวสูง"
+    });
+  }
+
+  // 耳
+  if (has("ears_neutral")) {
+    stateScore.relaxed += 1;
+    stateScore.curious += 1;
+    reasons.push({
+      ja: "耳が普通向きで、周囲を落ち着いて見ています。",
+      en: "Neutral ears suggest calm awareness of the surroundings.",
+      th: "หูอยู่ในตำแหน่งปกติ แสดงว่ากำลังรับรู้สิ่งรอบตัวอย่างสงบ"
+    });
+  }
+
+  if (has("ears_back_soft")) {
+    stateScore.alert += 2;
+    reasons.push({
+      ja: "耳が少し後ろなのは、軽い警戒や不快のサインです。",
+      en: "Slightly back ears suggest mild caution or discomfort.",
+      th: "หูเอนไปด้านหลังเล็กน้อยเป็นสัญญาณของความระวังหรือไม่สบายใจเล็กน้อย"
     });
   }
 
@@ -600,77 +642,50 @@ function detectState(selected) {
     stateScore.alert += 3;
     stateScore.tolerating += 1;
     reasons.push({
-      ja: "耳が強く後ろならかなり警戒寄りです。",
-      en: "Strongly pinned back ears suggest strong alertness.",
-      th: "หูพับไปด้านหลังชัดเจน แปลว่าระวังตัวมาก"
+      ja: "耳が強く後ろなら、かなり警戒や不快が強いです。",
+      en: "Pinned-back ears suggest strong caution or discomfort.",
+      th: "หูพับไปด้านหลังแรงแสดงถึงความระวังหรือความไม่สบายใจสูง"
     });
   }
 
-  if (has("ears_back_soft") || has("ears_side") || has("ears_flat_side")) {
-    stateScore.alert += 2;
-    reasons.push({
-      ja: "耳の後ろ・横向きは少し警戒のサインです。",
-      en: "Back or sideways ears suggest caution.",
-      th: "หูไปด้านหลังหรือออกข้าง บ่งบอกถึงความระวัง"
-    });
-  }
-
-  if (has("ears_forward") || has("ears_neutral")) {
-    stateScore.curious += 1;
-    stateScore.relaxed += 1;
-    reasons.push({
-      ja: "耳が普通か前向きで、環境を見ています。",
-      en: "Neutral or forward ears suggest calm attention to the environment.",
-      th: "หูปกติหรือชี้ไปข้างหน้า แปลว่ากำลังรับรู้สิ่งรอบตัวอย่างสงบ"
-    });
-  }
-
-  if (has("held_in_arms")) {
-    stateScore.tolerating += 3;
-    reasons.push({
-      ja: "抱っこ中は我慢して受け入れている可能性があります。",
-      en: "Being held can suggest tolerating contact.",
-      th: "การถูกอุ้มอาจหมายถึงกำลังอดทนยอมรับการสัมผัส"
-    });
-  }
-
+  // 前足
   if (has("paws_hanging")) {
-    stateScore.tolerating += 2;
-    stateScore.relaxed += 1;
+    stateScore.relaxed += 2;
+    stateScore.tolerating += 1;
     reasons.push({
-      ja: "前足だらんは脱力か、抱っこを受け入れている時に見られます。",
-      en: "Hanging paws can suggest limp relaxation or tolerating handling.",
-      th: "ขาหน้าห้อยอาจหมายถึงการปล่อยตัวหรือยอมให้จับ"
+      ja: "前足がだらんとしていて、力が抜けています。",
+      en: "Hanging paws suggest looseness and relaxation.",
+      th: "ขาหน้าห้อยบ่งบอกถึงการปล่อยตัวและความผ่อนคลาย"
     });
   }
 
-  if (has("paw_cross") || has("paws_crossed")) {
+  if (has("paws_crossed")) {
     stateScore.relaxed += 2;
     stateScore.dominant += 1;
     reasons.push({
       ja: "前足クロスは余裕や落ち着きの印象があります。",
       en: "Crossed paws suggest poise and calmness.",
-      th: "การไขว้ขาหน้าสื่อถึงความนิ่งและดูมีความมั่นใจ"
+      th: "การไขว้ขาหน้าสื่อถึงความนิ่งและความมั่นใจ"
     });
   }
 
-  if (has("paw_lift") || has("ghost_pose")) {
-    stateScore.curious += 2;
-    stateScore.alert += 1;
-    reasons.push({
-      ja: "前足を少し上げるのは様子見や興味のサインです。",
-      en: "A lifted paw suggests curiosity or cautious observation.",
-      th: "การยกขาหน้าสื่อถึงการสังเกตหรือความสนใจ"
-    });
-  }
-
-  if (has("paws_holding") || has("grab_hold") || has("paw_touch_face")) {
-    stateScore.play_mode += 3;
+  if (has("paws_holding")) {
+    stateScore.play_mode += 2;
     stateScore.curious += 1;
     reasons.push({
       ja: "つかむ動きは遊びや関わりたい気持ちが出やすいです。",
-      en: "Holding or grabbing suggests play or engagement.",
-      th: "การจับหรือกอดบ่งบอกถึงความอยากเล่นหรือมีปฏิสัมพันธ์"
+      en: "Holding suggests play or engagement.",
+      th: "การจับบ่งบอกถึงความอยากเล่นหรือมีปฏิสัมพันธ์"
+    });
+  }
+
+  if (has("paws_pushing")) {
+    stateScore.alert += 2;
+    stateScore.tolerating += 1;
+    reasons.push({
+      ja: "押す動きは距離を取りたいサインです。",
+      en: "Pushing suggests the cat wants space.",
+      th: "การผลักเป็นสัญญาณว่าต้องการระยะห่าง"
     });
   }
 
@@ -685,79 +700,80 @@ function detectState(selected) {
   }
 
   if (has("paws_pushing_claws")) {
-    stateScore.alert += 2;
+    stateScore.alert += 3;
     stateScore.tolerating += 2;
     reasons.push({
-      ja: "爪を出して押すのは、不快さが強めのサインです。",
-      en: "Pushing with claws suggests a stronger level of discomfort.",
-      th: "การผลักพร้อมกางเล็บบ่งบอกถึงความไม่สบายใจที่แรงขึ้น"
+      ja: "爪を出して押すのは、不快さがかなり強いサインです。",
+      en: "Pushing with claws suggests strong discomfort.",
+      th: "การผลักพร้อมกางเล็บเป็นสัญญาณของความไม่สบายใจค่อนข้างแรง"
     });
   }
 
-  if (has("paws_pushing") || has("paw_push") || has("claws_out")) {
-    stateScore.alert += 2;
-    stateScore.tolerating += 1;
+  if (has("paws_grabbing")) {
+    stateScore.relaxed += 1;
+    stateScore.play_mode += 1;
     reasons.push({
-      ja: "押す・爪を出す動きは距離を取りたいサインのことがあります。",
-      en: "Pushing or claws out can suggest wanting space.",
-      th: "การผลักหรือกางเล็บอาจหมายถึงต้องการระยะห่าง"
+      ja: "抱える・しがみつく動きは、甘えや遊びたい気持ちが出やすいです。",
+      en: "Grabbing suggests affection or playfulness.",
+      th: "การกอดหรือจับแน่นมักสื่อถึงความอ้อนหรืออยากเล่น"
     });
   }
 
-  if (has("loaf")) {
+  // しっぽ
+  if (has("tail_relaxed")) {
     stateScore.relaxed += 2;
     reasons.push({
-      ja: "香箱座りは安心して落ち着いている時に多いです。",
-      en: "Loaf position often appears when a cat feels calm and safe.",
-      th: "ท่านั่งเก็บขามักพบเมื่อน้องรู้สึกสงบและปลอดภัย"
+      ja: "しっぽがゆるいのは落ち着きのサインです。",
+      en: "A relaxed tail suggests calmness.",
+      th: "หางที่ผ่อนคลายเป็นสัญญาณของความสงบ"
     });
   }
 
-  if (has("lying_relaxed") || has("body_flat")) {
-    stateScore.relaxed += 3;
-    stateScore.sleep_mode += 1;
+  if (has("tail_tucked")) {
+    stateScore.alert += 2;
     reasons.push({
-      ja: "だらけて横になるのはかなりリラックス寄りです。",
-      en: "Lying loosely suggests strong relaxation.",
-      th: "การนอนเหยียดยาวแสดงถึงความผ่อนคลายมาก"
+      ja: "しっぽを巻くのは不安や警戒のサインです。",
+      en: "A tucked tail suggests anxiety or caution.",
+      th: "การม้วนหางเป็นสัญญาณของความกังวลหรือการระวัง"
     });
   }
 
-  if (has("curled_sleep")) {
-    stateScore.sleep_mode += 3;
-    stateScore.relaxed += 1;
-    reasons.push({
-      ja: "丸まって寝るのは睡眠モードに近いです。",
-      en: "Curled sleeping suggests sleep mode.",
-      th: "การนอนขดตัวบ่งบอกถึงโหมดนอน"
-    });
-  }
-
-  if (has("belly_up") || has("belly_exposed")) {
-    stateScore.relaxed += 3;
+  if (has("tail_puffed")) {
+    stateScore.alert += 3;
     stateScore.dominant += 1;
     reasons.push({
-      ja: "お腹を見せるのは安心感が高いサインです。",
-      en: "Showing the belly suggests a high level of comfort.",
-      th: "การโชว์พุงบ่งบอกถึงความรู้สึกปลอดภัยสูง"
+      ja: "しっぽが膨らむのは、強い警戒や威嚇のサインです。",
+      en: "A puffed tail suggests strong alarm or intimidation.",
+      th: "หางพองเป็นสัญญาณของความตกใจหรือการขู่"
     });
   }
 
+  // 体
   if (has("sitting_normal")) {
     stateScore.curious += 2;
     reasons.push({
-      ja: "普通座りは様子見や観察中に多いです。",
+      ja: "普通に座っているのは様子見や観察中に多いです。",
       en: "Normal sitting often appears during observation.",
       th: "การนั่งปกติมักพบเมื่อน้องกำลังสังเกตอยู่"
     });
   }
 
-  if (has("upright_alert") || has("body_low")) {
-    stateScore.alert += 2;
+  if (has("lying_relaxed")) {
+    stateScore.relaxed += 4;
+    stateScore.sleep_mode += 1;
     reasons.push({
-      ja: "上体を起こす・低くする姿勢は警戒と関係しやすいです。",
-      en: "Upright or low body posture often relates to alertness.",
-      th: "ท่าลุกตัวขึ้นหรือลำตัวต่ำมักเกี่ยวข้องกับการระวังตัว"
+      ja: "寝てリラックスしていて、かなり安心していそうです。",
+      en: "A relaxed lying posture suggests strong comfort.",
+      th: "การนอนผ่อนคลายบ่งบอกถึงความสบายใจมาก"
+    });
+  }
+
+  if (has("held_in_arms")) {
+    stateScore.tolerating += 3;
+    reasons.push({
+      ja: "抱っこ中は、受け入れているか我慢している可能性があります。",
+      en: "Being held can suggest tolerating contact.",
+      th: "การถูกอุ้มอาจหมายถึงกำลังยอมรับหรืออดทนต่อการสัมผัส"
     });
   }
 
@@ -768,6 +784,75 @@ function detectState(selected) {
       ja: "高い場所では余裕を持って周囲を見ることがあります。",
       en: "A high position can suggest confidence and calm observation.",
       th: "การอยู่ในที่สูงอาจสื่อถึงความมั่นใจและการมองรอบตัวอย่างสบายใจ"
+    });
+  }
+
+  if (has("body_tense_ready")) {
+    stateScore.alert += 4;
+    stateScore.play_mode += 1;
+    reasons.push({
+      ja: "全身に力が入っているのは、戦うか走り出す直前のサインです。",
+      en: "A tense body suggests a fight-or-run moment.",
+      th: "ลำตัวที่เกร็งบ่งบอกถึงช่วงก่อนสู้หรือพุ่งตัว"
+    });
+  }
+
+  if (has("body_arched")) {
+    stateScore.dominant += 4;
+    stateScore.alert += 2;
+    reasons.push({
+      ja: "背中を丸めるのは、威嚇や強い緊張のサインです。",
+      en: "An arched back suggests intimidation or strong tension.",
+      th: "การโก่งหลังเป็นสัญญาณของการขู่หรือความตึงเครียดสูง"
+    });
+  }
+
+  if (has("body_play_butt_up")) {
+    stateScore.play_mode += 4;
+    reasons.push({
+      ja: "お尻を上げるのは、遊びに誘う代表的なポーズです。",
+      en: "A play bow is a classic invitation to play.",
+      th: "การยกก้นเป็นท่าชวนเล่นแบบคลาสสิก"
+    });
+  }
+
+  // 口元
+  if (has("mouth_relaxed")) {
+    stateScore.relaxed += 2;
+    reasons.push({
+      ja: "口元がゆるいのは安心しているサインです。",
+      en: "A relaxed mouth suggests comfort.",
+      th: "ปากที่ผ่อนคลายเป็นสัญญาณของความสบายใจ"
+    });
+  }
+
+  if (has("mouth_tight")) {
+    stateScore.alert += 2;
+    stateScore.tolerating += 1;
+    reasons.push({
+      ja: "口を引き結ぶのは、不快さや緊張のサインです。",
+      en: "A tight mouth suggests discomfort or tension.",
+      th: "การเม้มปากเป็นสัญญาณของความไม่สบายใจหรือความตึงเครียด"
+    });
+  }
+
+  // ヒゲ
+  if (has("whiskers_relaxed")) {
+    stateScore.relaxed += 2;
+    reasons.push({
+      ja: "ヒゲが自然なのは、落ち着いているサインです。",
+      en: "Relaxed whiskers suggest calmness.",
+      th: "หนวดที่ดูเป็นธรรมชาติเป็นสัญญาณของความสงบ"
+    });
+  }
+
+  if (has("whiskers_forward")) {
+    stateScore.alert += 1;
+    stateScore.play_mode += 1;
+    reasons.push({
+      ja: "ヒゲが前に張るのは、強い集中や興奮のサインです。",
+      en: "Forward whiskers suggest arousal or strong focus.",
+      th: "หนวดที่ชี้ไปด้านหน้าเป็นสัญญาณของความตื่นตัวหรือจดจ่อมาก"
     });
   }
 
@@ -788,31 +873,73 @@ function stateToEmotion(state, selected) {
   const values = Object.values(selected);
   const has = (k) => values.includes(k);
 
+  // 強い怒り顔
+  if (
+    has("eyes_tense") &&
+    has("mouth_tight") &&
+    (has("body_tense_ready") || has("paws_pushing_claws"))
+  ) {
+    return "annoyed";
+  }
+
+  // 威嚇の最終段階
+  if (
+    has("body_arched") &&
+    (has("eyes_wide_alert") || has("whiskers_forward"))
+  ) {
+    return "annoyed";
+  }
+
+  // 甘えの強い形
+  if (
+    has("paws_grabbing") &&
+    (has("mouth_relaxed") || has("whiskers_relaxed") || has("eyes_closed"))
+  ) {
+    return "affectionate";
+  }
+
+  // プレイ誘い
+  if (has("body_play_butt_up")) {
+    return "playful";
+  }
+
+  // 遊びに飛び出す直前
+  if (
+    has("body_tense_ready") &&
+    has("eyes_staring") &&
+    !has("mouth_tight")
+  ) {
+    return "playful";
+  }
+
   if (state === "sleep_mode") return "sleepy";
 
   if (state === "relaxed") {
-    if (has("slow_blink") || has("kneading")) return "affectionate";
+    if (has("paws_grabbing") || has("mouth_relaxed") || has("whiskers_relaxed")) {
+      return "affectionate";
+    }
     return "relaxed";
   }
 
-    if (state === "tolerating") {
-    if (has("paws_pushing_claws")) return "annoyed";
+  if (state === "tolerating") {
+    if (has("paws_pushing_claws") || has("mouth_tight")) return "annoyed";
     return "tolerating";
   }
 
-   if (state === "alert") {
+  if (state === "alert") {
     if (
+      has("eyes_tense") ||
       has("ears_back_strong") ||
-      has("paws_pushing") ||
-      has("paw_push") ||
-      has("paws_pushing_claws")
-    ) return "annoyed";
-
+      has("paws_pushing_claws") ||
+      has("mouth_tight")
+    ) {
+      return "annoyed";
+    }
     return "cautious";
   }
 
   if (state === "play_mode") return "playful";
-  if (state === "dominant") return "observing";
+  if (state === "dominant") return "annoyed";
   if (state === "curious") return "observing";
 
   return "observing";
