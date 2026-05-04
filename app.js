@@ -331,7 +331,14 @@ async function resizeImage(file) {
     img.onload = () => {
       const canvas = document.createElement("canvas");
 
-      const MAX_SIZE = 1200;
+      let MAX_SIZE = 800;
+      let quality = 0.7;
+
+      // 大きすぎる画像はさらに縮小（Vercel / Geminiエラー防止）
+      if (file.size > 3000000) {
+        MAX_SIZE = 600;
+        quality = 0.6;
+      }
 
       let width = img.width;
       let height = img.height;
@@ -354,7 +361,7 @@ async function resizeImage(file) {
       const ctx = canvas.getContext("2d");
       ctx.drawImage(img, 0, 0, width, height);
 
-      const compressed = canvas.toDataURL("image/jpeg", 0.75);
+      const compressed = canvas.toDataURL("image/jpeg", quality);
 
       resolve(compressed);
     };
@@ -890,14 +897,6 @@ function stateToEmotion(state, selected) {
     return "annoyed";
   }
 
-  // 甘えの強い形
-  if (
-    has("paws_grabbing") &&
-    (has("mouth_relaxed") || has("whiskers_relaxed") || has("eyes_closed"))
-  ) {
-    return "affectionate";
-  }
-
   // プレイ誘い
   if (has("body_play_butt_up")) {
     return "playful";
@@ -910,6 +909,14 @@ function stateToEmotion(state, selected) {
     !has("mouth_tight")
   ) {
     return "playful";
+  }
+
+  // 甘えの強い形
+  if (
+    has("paws_grabbing") &&
+    (has("mouth_relaxed") || has("whiskers_relaxed") || has("eyes_closed"))
+  ) {
+    return "affectionate";
   }
 
   if (state === "sleep_mode") return "sleepy";
