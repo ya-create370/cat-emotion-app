@@ -375,6 +375,7 @@ async function loadFeatures() {
   featuresData = await res.json();
   updateStaticText();
   renderManualSelectors();
+  renderHistory();
 }
 
 function renderManualSelectors() {
@@ -566,6 +567,7 @@ function analyzeSelection() {
 
   const result = judgeEmotion(selected);
   renderResult(result, selected);
+  saveHistory(result.emotionKey);
 }
 
 function detectState(selected) {
@@ -1492,12 +1494,65 @@ function renderResult(result, selected) {
   `;
 }
 
+// 履歴保存（最新を先頭に追加、最大50件）
+function saveHistory(emotionKey) {
+  if (!emotionKey) return;
+  const history = JSON.parse(localStorage.getItem("catHistory") || "[]");
+  history.unshift({
+    date: new Date().toISOString(),
+    emotion: emotionKey
+  });
+  localStorage.setItem("catHistory", JSON.stringify(history.slice(0, 50)));
+  renderHistory();
+}
+
+// 履歴表示（最新10件、新しい順）
+function renderHistory() {
+  const historyArea = document.getElementById("history");
+  if (!historyArea) return;
+
+  const history = JSON.parse(localStorage.getItem("catHistory") || "[]").slice(0, 10);
+
+  if (history.length === 0) {
+    historyArea.innerHTML = "";
+    return;
+  }
+
+  const titleMap = {
+    ja: "履歴（最新10件）",
+    en: "History (Latest 10)",
+    th: "ประวัติ (10 ล่าสุด)"
+  };
+
+  const localeMap = { ja: "ja-JP", en: "en-US", th: "th-TH" };
+
+  const items = history.map(item => {
+    const d = new Date(item.date);
+    const dateStr = d.toLocaleString(localeMap[currentLang] || "ja-JP", {
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+    const label =
+      (emotionLabels[item.emotion] && emotionLabels[item.emotion][currentLang]) ||
+      item.emotion;
+    return `<li>${dateStr} — ${label}</li>`;
+  }).join("");
+
+  historyArea.innerHTML = `
+    <h2>${titleMap[currentLang] || titleMap.ja}</h2>
+    <ul class="history-list">${items}</ul>
+  `;
+}
+
 if (langSelect) {
   langSelect.addEventListener("change", e => {
     currentLang = e.target.value;
     updateStaticText();
     renderManualSelectors();
     resultBox.innerHTML = "";
+    renderHistory();
   });
 }
 
