@@ -474,10 +474,29 @@ async function analyzePhotoWithAI() {
       </div>
     `;
   } catch (error) {
+    // Geminiが使えなくてもアプリを止めない（フォールバック）
+    const fallback = {
+      result: {
+        features: {
+          eyes: "eyes_staring",
+          ears: "ears_neutral",
+          paws: "paws_hanging",
+          body: "sitting_normal"
+        }
+      }
+    };
+    applyAIResultToSelectors(fallback);
+
+    const fallbackMessage = {
+      ja: "AIが現在利用できません。手動または簡易判定に切り替えました",
+      en: "AI is currently unavailable. Switched to fallback mode",
+      th: "AI ไม่สามารถใช้งานได้ในขณะนี้ เปลี่ยนเป็นโหมดสำรอง"
+    };
+
     resultBox.innerHTML = `
       <div class="result-card">
-        <h3>${text("aiError")}</h3>
-        <p>${error.message}</p>
+        <h3>${text("aiAnalyze")}</h3>
+        <p>${fallbackMessage[currentLang] || fallbackMessage.ja}</p>
       </div>
     `;
   } finally {
